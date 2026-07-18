@@ -2,1128 +2,342 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Barber & Beauty Connect Pro</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-    
-    <style>
-        /* RESET E VARIÁVEIS PREMIUM */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        :root { 
-            --primary-blue: #0062FF; 
-            --primary-blue-dark: #004BCC; 
-            --business-color: #9C27B0; 
-            --business-color-dark: #7B1FA2;
-            --success-color: #00C853;
-            --warning-color: #FFAB00;
-            --danger-color: #D32F2F;
-            --background-gray: #F4F6F8; 
-            --card-background: #FFFFFF; 
-            --text-main: #1C2025; 
-            --text-muted: #637381; 
-            --star-yellow: #FFB400; 
-            --border-color: #E5E8EB; 
-            --bottom-nav-bg: #FFFFFF; 
-            --shadow-sm: 0 4px 12px rgba(0,0,0,0.04); 
-            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
-            --radius-md: 12px;
-            --radius-lg: 16px;
-        }
-        
-        /* AJUSTE PARA ANDROID NATIVO: Fundo 100% da tela, sem bordas ou sombras externas */
-        body { 
-            background-color: var(--background-gray); 
-            display: flex; 
-            justify-content: center; 
-            color: var(--text-main); 
-            overflow: hidden; 
-            width: 100vw;
-            height: 100dvh; /* dvh se adapta perfeitamente ao Android */
-        }
-
-        .app-container { 
-            width: 100%; 
-            max-width: 100%; /* Removido o limite de 420px */
-            height: 100%; 
-            background-color: var(--background-gray); 
-            display: flex; 
-            flex-direction: column; 
-            position: relative; 
-            box-shadow: none; /* Removido para colar nas bordas da tela */
-            overflow: hidden; 
-        }
-        
-        /* SISTEMA DE TELAS */
-        .screen { display: none; flex: 1; overflow-y: auto; padding-bottom: 80px; flex-direction: column; }
-        .screen.active { display: flex; animation: fadeIn 0.3s ease; }
-        .screen.no-nav { padding-bottom: 0; } 
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* DEGRADÊ ANIMADO GERAL (Para telas de login) */
-        .animated-bg {
-            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #0062FF, #9C27B0);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-        }
-        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
-        /* COMPONENTES GLOBAIS */
-        .header { background-color: var(--card-background); padding: 20px 16px 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 5; box-shadow: var(--shadow-sm); }
-        .back-btn { background: none; border: none; font-size: 24px; color: var(--text-main); cursor: pointer; display: flex; align-items: center; transition: transform 0.2s; }
-        .back-btn:active { transform: scale(0.9); }
-        h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
-        h2 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
-        p { font-size: 14px; color: var(--text-muted); }
-        .section-container { margin: 16px; margin-bottom: 24px; }
-        h3 { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: var(--text-main); }
-
-        /* FORMS E BOTÕES */
-        .input-group { margin-bottom: 16px; }
-        .input-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); }
-        .input-field, select.input-field { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); font-size: 15px; outline: none; transition: all 0.2s; background: var(--background-gray); color: var(--text-main); }
-        .input-field:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 4px rgba(0, 98, 255, 0.1); background: var(--card-background); }
-        
-        .btn-primary { background-color: var(--primary-blue); color: white; border: none; padding: 16px; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; text-align: center; margin-top: 8px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0, 98, 255, 0.2); }
-        .btn-primary:active { transform: scale(0.98); background-color: var(--primary-blue-dark); box-shadow: none; }
-        .btn-primary:disabled { opacity: 0.6; pointer-events: none; box-shadow: none; }
-        .btn-business { background-color: var(--business-color); box-shadow: 0 4px 12px rgba(156, 39, 176, 0.2); }
-        .btn-business:active { background-color: var(--business-color-dark); }
-        .btn-danger { background-color: var(--danger-color); color: white; border: none; padding: 14px; border-radius: var(--radius-md); font-weight: 600; width: 100%; margin-top: 8px; cursor: pointer;}
-        .btn-success { background-color: var(--success-color); color: white; border: none; padding: 14px; border-radius: var(--radius-md); font-weight: 600; width: 100%; margin-top: 8px; cursor: pointer;}
-        .btn-outline { background: transparent; color: var(--text-main); border: 1.5px solid var(--border-color); padding: 14px; border-radius: var(--radius-md); font-weight: 600; width: 100%; margin-top: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
-        .btn-outline:active { background: #f0f0f0; }
-        
-        .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); background: var(--card-background); border-radius: var(--radius-lg); border: 1px dashed var(--border-color); }
-        .empty-state .material-icons-outlined { font-size: 48px; margin-bottom: 16px; color: #B0BEC5; }
-
-        /* TELAS DE AUTENTICAÇÃO */
-        .auth-container { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 24px; }
-        .auth-card { background: var(--card-background); padding: 32px 24px; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); width: 100%; }
-        .auth-header { padding: 24px 24px 0 24px; display: flex; align-items: center; }
-        .blur-btn { background: rgba(255, 255, 255, 0.2); color: white !important; border-radius: 50%; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.3); }
-        
-        .welcome-logo { width: 100px; height: 100px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 30px; display: flex; justify-content: center; align-items: center; font-size: 48px; margin-bottom: 32px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); animation: floatLogo 3s ease-in-out infinite; }
-        @keyframes floatLogo { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
-        
-        @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .welcome-title { font-size: 32px; font-weight: 800; margin-bottom: 12px; color: white; opacity: 0; animation: slideUpFade 0.8s ease 0.2s forwards; }
-        .welcome-subtitle { font-size: 16px; color: rgba(255,255,255,0.9); margin-bottom: 48px; opacity: 0; animation: slideUpFade 0.8s ease 0.4s forwards; }
-        .welcome-btn { background: white; color: var(--primary-blue); border: none; padding: 18px; border-radius: var(--radius-md); font-size: 16px; font-weight: 700; width: 100%; margin-bottom: 16px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; opacity: 0; animation: slideUpFade 0.8s ease 0.6s forwards; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
-        .welcome-btn:active { transform: scale(0.96); box-shadow: none; }
-        .welcome-btn.business { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(5px); animation-delay: 0.8s; }
-
-        /* HOME SCREEN (CLIENTE) */
-        .search-container { display: flex; align-items: center; background-color: var(--card-background); border-radius: var(--radius-md); padding: 10px 16px; margin: 16px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); transition: border 0.2s; }
-        .search-container:focus-within { border-color: var(--primary-blue); }
-        #searchInput { flex: 1; border: none; outline: none; font-size: 15px; background: transparent; }
-        
-        .filters-scroll { display: flex; gap: 12px; overflow-x: auto; padding: 0 16px 8px 16px; margin-bottom: 16px; scroll-behavior: smooth; }
-        .filters-scroll::-webkit-scrollbar { display: none; }
-        .filter-chip { white-space: nowrap; background-color: var(--card-background); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 30px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text-muted); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: var(--shadow-sm); }
-        .filter-chip.active { background-color: var(--primary-blue); color: white; border-color: var(--primary-blue); box-shadow: 0 4px 10px rgba(0, 98, 255, 0.3); transform: translateY(-2px); }
-
-        .list-card { display: flex; background-color: var(--card-background); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); cursor: pointer; border: 1px solid var(--border-color); margin-bottom: 16px; transition: transform 0.2s, box-shadow 0.2s; }
-        .list-card:active { transform: scale(0.96); box-shadow: none; }
-        .list-card-content { flex: 1; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; }
-        
-        .badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .badge.barbearia { background: #E3F2FD; color: #0D47A1; }
-        .badge.salao { background: #FCE4EC; color: #880E4F; }
-        .status-open { color: var(--success-color); font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 4px; }
-        .status-closed { color: var(--danger-color); font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 4px; }
-        
-        .business-logo-thumb { width: 56px; height: 56px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-color); flex-shrink: 0; box-shadow: var(--shadow-sm); background: #eee; }
-
-        /* PERFIL DO ESTABELECIMENTO E CARROSSEL */
-        .portfolio-carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; height: 220px; background: linear-gradient(135deg, #1C2025 0%, #3A424A 100%); scroll-behavior: smooth; }
-        .portfolio-carousel::-webkit-scrollbar { display: none; }
-        .portfolio-slide { flex: 0 0 100%; width: 100%; height: 100%; position: relative; scroll-snap-align: start; }
-        .portfolio-slide img { width: 100%; height: 100%; object-fit: cover; }
-        .portfolio-empty { flex: 0 0 100%; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.8); }
-        .swipe-hint { position: absolute; bottom: 32px; right: 8px; background: rgba(0,0,0,0.6); color: white; font-size: 10px; padding: 4px 8px; border-radius: 12px; font-weight: 600; letter-spacing: 0.5px; z-index: 3; }
-
-        .perfil-info-box { background: var(--card-background); margin: -40px 16px 16px 16px; padding: 24px; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); position: relative; z-index: 2; border: 1px solid var(--border-color); }
-        .info-row { display: flex; align-items: flex-start; gap: 10px; margin-top: 12px; font-size: 14px; color: var(--text-muted); line-height: 1.4; }
-        .info-row .material-icons-outlined { font-size: 18px; color: var(--primary-blue); margin-top: 2px; }
-        .rating-box { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 12px;}
-        .rating-box .material-icons-outlined { color: var(--star-yellow); font-size: 20px; }
-
-        .slots-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scroll-behavior: smooth; margin-bottom: 16px; }
-        .slots-scroll::-webkit-scrollbar { display: none; }
-        .slot-card { flex: 0 0 auto; background: var(--card-background); border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 14px 16px; text-align: center; cursor: pointer; transition: all 0.2s; min-width: 90px; box-shadow: var(--shadow-sm); }
-        .slot-card:active { transform: scale(0.95); }
-        .slot-card.selected { border-color: var(--primary-blue); background: #F0F4FF; box-shadow: 0 4px 12px rgba(0, 98, 255, 0.15); transform: translateY(-2px); }
-        .slot-card .slot-date { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; transition: color 0.2s; }
-        .slot-card.selected .slot-date { color: var(--primary-blue); }
-        .slot-card .slot-time { font-size: 18px; font-weight: 700; color: var(--text-main); transition: color 0.2s; }
-        .slot-card.selected .slot-time { color: var(--primary-blue); }
-
-        .service-item { display: flex; justify-content: space-between; align-items: center; background: var(--card-background); padding: 18px; border-radius: var(--radius-md); margin-bottom: 12px; border: 2px solid var(--border-color); cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); }
-        .service-item:active { transform: scale(0.98); }
-        .service-item.selected { border-color: var(--primary-blue); background-color: #F0F4FF; box-shadow: 0 4px 12px rgba(0, 98, 255, 0.1); } 
-        .service-item .material-icons-outlined { color: var(--border-color); transition: color 0.2s; }
-        .service-item.selected .material-icons-outlined { color: var(--primary-blue); }
-
-        /* EDIÇÃO DE IMAGENS */
-        .edit-portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
-        .edit-portfolio-item { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); background: #eee; }
-        .edit-portfolio-item img { width: 100%; height: 100%; object-fit: cover; }
-        .edit-portfolio-item .btn-remove { position: absolute; top: 4px; right: 4px; background: var(--danger-color); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-sm); }
-
-        /* AGENDAMENTOS */
-        .agenda-card { background: var(--card-background); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow-sm); transition: transform 0.2s; }
-        .agenda-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 12px; }
-        .agenda-status { font-size: 11px; font-weight: 700; padding: 6px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .status-pendente { background: #FFF8E1; color: #F57F17; }
-        .status-aceito { background: #E8F5E9; color: #1B5E20; }
-        .status-recusado { background: #FFEBEE; color: #B71C1C; }
-        .status-concluido { background: #F5F5F5; color: #424242; }
-
-        /* SISTEMA DE CHAT */
-        .chat-list-item { display: flex; align-items: center; gap: 16px; background: var(--card-background); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 12px; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); }
-        .chat-list-item:active { transform: scale(0.98); }
-        .chat-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--primary-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; flex-shrink: 0; object-fit: cover;}
-        
-        .chat-messages-area { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: #E5DDD5; }
-        .chat-bubble { max-width: 80%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.4; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .chat-bubble.sent { align-self: flex-end; background-color: #DCF8C6; color: #303030; border-bottom-right-radius: 4px; }
-        .chat-bubble.received { align-self: flex-start; background-color: var(--card-background); color: var(--text-main); border-bottom-left-radius: 4px; }
-        .chat-time { font-size: 10px; color: rgba(0,0,0,0.5); display: block; text-align: right; margin-top: 4px; }
-        
-        .chat-input-area { background: var(--card-background); padding: 12px 16px; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; }
-        .chat-input { flex: 1; padding: 12px 16px; border-radius: 24px; border: 1px solid var(--border-color); outline: none; background: var(--background-gray); font-size: 15px; }
-        .chat-send-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--primary-blue); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; flex-shrink: 0; }
-        .chat-send-btn:active { transform: scale(0.9); }
-
-        /* DASHBOARD EMPRESA - STATUS E RELATÓRIO */
-        .dashboard-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-        .stat-card { background: var(--card-background); padding: 16px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: center; box-shadow: var(--shadow-sm); }
-        .stat-card h3 { font-size: 22px; margin-bottom: 4px; font-weight: 700; color: var(--text-main); }
-        .stat-card p { font-size: 11px; color: var(--text-muted); margin: 0; font-weight: 600; text-transform: uppercase; }
-        .client-month-item { padding: 12px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .client-month-item:last-child { border-bottom: none; }
-
-        /* MODAL POP-UP (Para Lista de Clientes e Edição Perfil) */
-        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; display: none; align-items: flex-end; justify-content: center; }
-        .modal-overlay.active { display: flex; animation: fadeInModalBg 0.3s ease; }
-        .modal-content { background: var(--background-gray); width: 100%; max-height: 85%; border-radius: 24px 24px 0 0; display: flex; flex-direction: column; animation: slideUpModal 0.3s ease; }
-        .modal-header { background: var(--card-background); padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; border-radius: 24px 24px 0 0; }
-        .modal-body { padding: 20px 16px; overflow-y: auto; flex: 1; }
-        @keyframes fadeInModalBg { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUpModal { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-        /* PERFIL CLIENTE (NOVO FORMATO CENTRALIZADO COM FOTO) */
-        .client-profile-header { 
-            padding: 32px 20px; 
-            background: var(--background-gray); 
-            border-top: 1px solid var(--border-color); 
-            border-bottom: 1px solid var(--border-color); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            text-align: center;
-            position: relative; 
-        }
-        .client-avatar { 
-            width: 100px; 
-            height: 100px; 
-            background: linear-gradient(135deg, var(--primary-blue) 0%, #00C6FF 100%); 
-            color: white; 
-            border-radius: 50%; 
-            display: inline-flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 40px; 
-            font-weight: bold; 
-            margin-bottom: 16px; 
-            box-shadow: var(--shadow-md); 
-            overflow: hidden;
-        }
-        .client-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .name-edit-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            justify-content: center;
-            margin-bottom: 4px;
-        }
-        
-        /* BOTTOM NAV */
-        .bottom-nav { position: absolute; bottom: 0; width: 100%; height: 70px; background-color: var(--bottom-nav-bg); display: none; justify-content: space-around; align-items: center; border-top: 1px solid var(--border-color); z-index: 10; padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 11px; font-weight: 600; cursor: pointer; transition: color 0.3s ease; width: 64px; }
-        .nav-item .material-icons-outlined { font-size: 26px; margin-bottom: 4px; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .nav-item.active { color: var(--primary-blue); }
-        .nav-item.active .material-icons-outlined { transform: translateY(-4px) scale(1.1); }
-        
-        .client-nav.active-nav { display: flex; }
-        .business-nav.active-nav { display: flex; }
-        .business-nav .nav-item.active { color: var(--business-color); }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DoaPets - App Mobile</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
-
-        <div id="screen-login-choice" class="screen active no-nav animated-bg">
-            <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:24px; text-align:center;">
-                <div class="welcome-logo">✨</div>
-                <h1 class="welcome-title">Connect Style</h1>
-                <p class="welcome-subtitle">O seu app definitivo de Beleza e Barbearia.</p>
-                <button class="welcome-btn" onclick="navigate('login-client')">Entrar como Cliente</button>
-                <button class="welcome-btn business" onclick="navigate('login-business')">Área do Estabelecimento</button>
-            </div>
+    <div class="mobile-app-container">
+        
+        <!-- TELA DE ABERTURA ANIMADA -->
+        <div id="splash-screen" class="splash-screen">
+            <div class="paw-animation">🐾</div>
+            <h1 class="splash-title">DoaPets</h1>
         </div>
 
-        <div id="screen-login-client" class="screen no-nav animated-bg">
-            <div class="auth-header">
-                <button class="back-btn blur-btn" onclick="navigate('login-choice')"><span class="material-icons-outlined">arrow_back</span></button>
-            </div>
-            <div class="auth-container">
-                <div class="auth-card">
-                    <h1 style="color: var(--primary-blue);">Login Cliente</h1>
-                    <p style="margin-bottom: 24px;">Acesse para agendar seu horário.</p>
-                    <div class="input-group"><label>E-mail</label><input type="email" id="loginClientEmail" class="input-field" placeholder="seu@email.com"></div>
-                    <div class="input-group"><label>Senha</label><input type="password" id="loginClientPass" class="input-field" placeholder="••••••••"></div>
-                    <button class="btn-primary" style="margin-top: 16px;" onclick="authClient()">Entrar na minha conta</button>
-                    <div style="text-align: center; margin-top: 24px; color: var(--primary-blue); font-weight: 600; cursor: pointer;" onclick="navigate('register-client')">Ainda não tem conta? Cadastre-se</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="screen-register-client" class="screen no-nav animated-bg">
-            <div class="auth-header">
-                <button class="back-btn blur-btn" onclick="navigate('login-client')"><span class="material-icons-outlined">arrow_back</span></button>
-            </div>
-            <div class="auth-container">
-                <div class="auth-card">
-                    <h1 style="color: var(--primary-blue);">Novo Cliente</h1>
-                    <div class="input-group" style="margin-bottom:12px;"><label>Nome Completo</label><input type="text" id="regClientName" class="input-field"></div>
-                    <div class="input-group" style="margin-bottom:12px;"><label>E-mail</label><input type="email" id="regClientEmail" class="input-field"></div>
-                    <div class="input-group" style="margin-bottom:12px;"><label>WhatsApp</label><input type="tel" id="regClientPhone" class="input-field" placeholder="(00) 00000-0000"></div>
-                    <div class="input-group" style="margin-bottom:12px;"><label>Senha</label><input type="password" id="regClientPass" class="input-field"></div>
-                    <button class="btn-primary" style="margin-top: 16px;" onclick="registerClient()">Concluir Cadastro</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="screen-login-business" class="screen no-nav animated-bg">
-            <div class="auth-header">
-                <button class="back-btn blur-btn" onclick="navigate('login-choice')"><span class="material-icons-outlined">arrow_back</span></button>
-            </div>
-            <div class="auth-container">
-                <div class="auth-card">
-                    <h1 style="color: var(--business-color);">Painel Empresa</h1>
-                    <p style="margin-bottom: 24px;">Gerencie sua agenda e serviços.</p>
-                    <div class="input-group"><label>E-mail do Estabelecimento</label><input type="email" id="loginBusEmail" class="input-field" placeholder="contato@empresa.com"></div>
-                    <div class="input-group"><label>Senha</label><input type="password" id="loginBusPass" class="input-field" placeholder="••••••••"></div>
-                    <button class="btn-primary btn-business" style="margin-top: 16px;" onclick="authBusiness()">Acessar Painel</button>
-                    <div style="text-align: center; margin-top: 24px; color: var(--business-color); font-weight: 600; cursor: pointer;" onclick="navigate('register-business')">Cadastrar Meu Negócio</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="screen-register-business" class="screen no-nav animated-bg">
-            <div class="auth-header">
-                <button class="back-btn blur-btn" onclick="navigate('login-business')"><span class="material-icons-outlined">arrow_back</span></button>
-            </div>
-            <div class="auth-container">
-                <div class="auth-card" style="padding: 24px;">
-                    <h1 style="color: var(--business-color); font-size:22px;">Nova Empresa</h1>
-                    <div class="input-group" style="margin-bottom:12px;">
-                        <label>Tipo</label>
-                        <select id="regBusType" class="input-field"><option value="barbearia">Barbearia</option><option value="salao">Salão de Beleza</option></select>
-                    </div>
-                    <div class="input-group" style="margin-bottom:12px;"><label>Nome do Local</label><input type="text" id="regBusName" class="input-field"></div>
-                    <div class="input-group" style="margin-bottom:12px;"><label>E-mail Profissional</label><input type="email" id="regBusEmail" class="input-field"></div>
-                    <div class="input-group" style="margin-bottom:12px;"><label>WhatsApp</label><input type="tel" id="regBusPhone" class="input-field"></div>
-                    <div class="input-group" style="margin-bottom:12px;"><label>Senha</label><input type="password" id="regBusPass" class="input-field"></div>
-                    <button class="btn-primary btn-business" style="margin-top: 16px;" onclick="registerBusiness()">Cadastrar e Iniciar</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="screen-home" class="screen">
-            <header class="header">
-                <div>
-                    <h2 id="homeClientName">Olá</h2>
-                    <p style="margin-top: 2px;">Encontre seu estilo hoje</p>
-                </div>
-                <div style="width: 44px; height: 44px; background: #F0F4FF; color: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; overflow: hidden;" id="homeClientAvatarBox" onclick="navigate('profile-client', 'client')">
-                    <span class="material-icons-outlined">person</span>
-                </div>
-            </header>
-            <div class="search-container">
-                <span class="material-icons-outlined" style="color: var(--text-muted); margin-right: 12px;">search</span>
-                <input type="text" id="searchInput" placeholder="Buscar salão ou barbearia..." onkeyup="renderClientHome()">
-            </div>
-            <div class="filters-scroll">
-                <button class="filter-chip active" onclick="setCategoryFilter('todos', this)">Todos</button>
-                <button class="filter-chip" onclick="setCategoryFilter('barbearia', this)">Barbearias</button>
-                <button class="filter-chip" onclick="setCategoryFilter('salao', this)">Salões de Beleza</button>
-            </div>
-            <section class="section-container">
-                <div class="barbershop-list" id="dynamicClientList"></div>
-            </section>
-        </div>
-
-        <div id="screen-perfil" class="screen">
-            <header class="header" style="box-shadow: none;">
-                <button class="back-btn" onclick="navigate('home', 'client')"><span class="material-icons-outlined">arrow_back</span></button>
-                <h2 id="viewProfHeaderTitle">Perfil</h2>
-                <div style="width: 24px;"></div>
-            </header>
+        <!-- TELA DE LOGIN E CADASTRO (DESIGN PREMIUM GLASSMORPHISM) -->
+        <div id="auth-section" class="auth-section" style="display: none;">
+            <!-- Fundo animado exclusivo -->
+            <div class="auth-bg-animated"></div>
             
-            <div style="position: relative;">
-                <div class="portfolio-carousel" id="viewProfCarousel"></div>
-            </div>
-
-            <div class="perfil-info-box">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div>
-                        <span id="viewProfBadge" class="badge">Tipo</span>
-                        <h2 id="viewProfName" style="margin: 6px 0 0 0; font-size: 22px;">Nome</h2>
-                    </div>
-                    <div id="viewProfStatusBox"></div>
-                </div>
-                <div class="rating-box" id="viewProfRating"></div>
-                <p id="viewProfDesc" style="margin-top: 16px; font-size: 14px; line-height: 1.5;"></p>
-                
-                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-color);">
-                    <div class="info-row">
-                        <span class="material-icons-outlined">call</span>
-                        <span id="viewProfPhone">Não informado</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="material-icons-outlined">location_on</span>
-                        <span id="viewProfAddress">Endereço não informado</span>
-                    </div>
+            <div class="glass-auth-card">
+                <div class="auth-header-modern">
+                    <div class="auth-logo-icon">🐶</div>
+                    <h2>DoaPets</h2>
+                    <p>Onde o amor encontra um lar</p>
                 </div>
 
-                <button class="btn-outline" style="margin-top: 20px; color: var(--primary-blue); border-color: var(--primary-blue);" onclick="startChatFromProfile()">
-                    <span class="material-icons-outlined">chat</span> Conversar no Chat
-                </button>
+                <div class="auth-tabs-modern">
+                    <div id="tab-slider" class="tab-slider"></div>
+                    <button id="btn-tab-login" class="auth-tab-mod active" onclick="mostrarLogin()">Entrar</button>
+                    <button id="btn-tab-cadastro" class="auth-tab-mod" onclick="mostrarCadastro()">Nova Conta</button>
+                </div>
+
+                <!-- Formulário de Login -->
+                <div id="form-login-container" class="form-container-mod fade-in">
+                    <form id="form-login">
+                        <div class="input-modern">
+                            <span class="input-icon">✉️</span>
+                            <input type="email" id="loginEmail" placeholder="Seu e-mail" required>
+                        </div>
+                        <div class="input-modern">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="loginSenha" placeholder="Sua senha" required>
+                        </div>
+                        <button type="submit" class="btn-auth-modern">Acessar App 🐾</button>
+                    </form>
+                </div>
+
+                <!-- Formulário de Cadastro -->
+                <div id="form-cadastro-container" class="form-container-mod fade-in" style="display: none;">
+                    <form id="form-usuario">
+                        <div class="input-modern">
+                            <span class="input-icon">👤</span>
+                            <input type="text" id="nomeUsuario" placeholder="Nome Completo ou ONG" required>
+                        </div>
+                        <div class="input-modern">
+                            <span class="input-icon">🏷️</span>
+                            <select id="tipoUsuario" required>
+                                <option value="" disabled selected>Qual o seu perfil?</option>
+                                <option value="ong">ONG Protetora</option>
+                                <option value="doador">Pessoa que Resgata/Doa</option>
+                                <option value="adotante">Quero apenas Adotar</option>
+                            </select>
+                        </div>
+                        <div class="input-modern">
+                            <span class="input-icon">✉️</span>
+                            <input type="email" id="cadEmail" placeholder="Seu melhor e-mail" required>
+                        </div>
+                        <div class="input-modern">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="cadSenha" placeholder="Crie uma senha segura" required>
+                        </div>
+                        <button type="submit" class="btn-auth-modern">Criar Conta Mágica ✨</button>
+                    </form>
+                </div>
             </div>
-
-            <section class="section-container">
-                <h3 style="font-size: 18px;">Horários Disponíveis</h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Deslize e selecione um horário</p>
-                <div id="viewProfSlots" class="slots-scroll"></div>
-
-                <h3 style="font-size: 18px; margin-top: 24px;">Serviços Disponíveis</h3>
-                <div id="viewProfServices"></div>
-                
-                <button id="btnAgendar" class="btn-primary" disabled onclick="finalizarAgendamento()" style="margin-top: 24px; padding: 18px; font-size: 18px;">
-                    Selecione Horário e Serviço
-                </button>
-            </section>
         </div>
 
-        <div id="screen-agenda-client" class="screen">
-            <header class="header"><h2>Meus Agendamentos</h2></header>
-            <section class="section-container" id="clientAgendaList"></section>
-        </div>
-
-        <div id="screen-chat-list" class="screen">
-            <header class="header"><h2>Mensagens</h2></header>
-            <section class="section-container" id="chatListContainer"></section>
-        </div>
-
-        <div id="screen-chat-view" class="screen no-nav">
-            <header class="header">
-                <button class="back-btn" onclick="closeChatView()"><span class="material-icons-outlined">arrow_back</span></button>
-                <h2 id="chatActiveName">Nome</h2>
-                <div style="width: 24px;"></div>
-            </header>
-            <div class="chat-messages-area" id="chatMessagesArea"></div>
-            <div class="chat-input-area">
-                <input type="text" id="chatInputText" class="chat-input" placeholder="Digite uma mensagem...">
-                <button class="chat-send-btn" onclick="sendMessage()"><span class="material-icons-outlined">send</span></button>
-            </div>
-        </div>
-
-        <div id="screen-profile-client" class="screen">
-            <header class="header" style="justify-content: center; border-bottom: none; box-shadow: none;">
-                <h2 style="font-size: 18px; text-align: center; width: 100%;">Minha Conta</h2>
-            </header>
+        <!-- APLICATIVO PRINCIPAL -->
+        <div id="main-app" class="main-app" style="display: none;">
             
-            <div class="client-profile-header">
-                <div class="client-avatar" id="clientProfileAvatar">M</div>
-                
-                <div class="name-edit-wrapper">
-                    <h2 id="clientProfileName" style="font-size: 22px; font-weight: 700; color: var(--text-main); margin: 0;">Nome</h2>
-                    <button onclick="openClientEditModal()" style="background: transparent; border: none; cursor: pointer; color: var(--primary-blue); padding: 4px; display: flex; align-items: center; transition: transform 0.2s;">
-                        <span class="material-icons-outlined" style="font-size: 20px;">edit</span>
-                    </button>
+            <header class="app-header-premium">
+                <div class="header-logo-text"><span style="color: var(--primary-color);">🐾</span> DoaPets</div>
+                <div class="header-actions-right">
+                    <button class="icon-btn-header" onclick="trocarAba('feed'); document.getElementById('filtro-cidade').focus();">🔍</button>
+                    <div class="header-avatar-container" onclick="trocarAba('perfil')">
+                        <span class="header-avatar-icon">👤</span>
+                        <span class="notification-badge-dot"></span>
+                    </div>
                 </div>
+            </header>
+
+            <main class="app-content">
                 
-                <p id="clientProfileEmail" style="color: var(--primary-blue); font-size: 13px; margin-bottom: 4px;">Email</p>
-                <p id="clientProfilePhone" style="color: var(--text-main); font-size: 13px; font-weight: 600;">Não cadastrado</p>
-            </div>
-            
-            <section class="section-container" style="margin-top: 24px;">
-                <h3 style="margin-bottom: 16px; font-size: 16px;">Configurações</h3>
-                <button class="btn-outline" style="color: var(--danger-color); border-color: #ffcdd2; background: #fff5f5; justify-content: center; width: 100%; border-radius: 8px; font-weight: 600;" onclick="fixAppData()">
-                    <span class="material-icons-outlined" style="font-size: 20px; margin-right: 4px;">build</span> Resetar / Corrigir App
-                </button>
-                <button class="btn-danger" style="margin-top: 16px; background: #D32F2F; border-radius: 8px; font-weight: 600;" onclick="logout()">Sair da Conta</button>
-            </section>
+                <!-- ABA HOME -->
+                <section id="aba-home" class="app-section aba-ativa">
+                    
+                    <div class="premium-hero-card">
+                        <div class="hero-paws">🐾🐾</div>
+                        <div class="hero-brand-title">DoaPets</div>
+                        <div class="hero-dots">
+                            <span class="dot active"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+
+                    <div class="section-title-row">
+                        <h3>Animals available for adoption</h3>
+                        <span class="see-all-link" onclick="trocarAba('feed')">Ver todos &gt;</span>
+                    </div>
+                    <div class="horizontal-scroll-container" id="carrossel-pets">
+                        <!-- Carregado via Javascript dinamicamente -->
+                    </div>
+                    <div class="hero-dots" style="margin-top: 5px; margin-bottom: 20px;">
+                        <span class="dot active"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+
+                    <div class="section-title-row">
+                        <h3>Registerde NGOs</h3>
+                        <span class="see-all-link" onclick="trocarAba('parceiros')">Ver todas &gt;</span>
+                    </div>
+                    <div class="map-section-container">
+                        <div class="simulated-map" style="background-image: url('https://maps.googleapis.com/maps/api/staticmap?center=-20.4637,-45.4297&zoom=14&size=400x200&sensor=false&markers=color:red%7C-20.4637,-45.4297');">
+                            <div class="map-pin">📍</div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- FEED ESTILO LINHA DO TEMPO -->
+                <section id="aba-feed" class="app-section" style="display: none;">
+                    <div class="feed-search">
+                        <input type="text" id="filtro-cidade" placeholder="🔍 Buscar por nome do pet ou cidade..." oninput="filtrarFeed()">
+                        <div class="filtro-botoes-especie">
+                            <button class="btn-filtro-especie ativo" onclick="filtrarPorEspecie('', this)">🐾 Todos</button>
+                            <button class="btn-filtro-especie" onclick="filtrarPorEspecie('Cachorro', this)">🐶 Cachorros</button>
+                            <button class="btn-filtro-especie" onclick="filtrarPorEspecie('Gato', this)">🐱 Gatos</button>
+                        </div>
+                    </div>
+                    <div id="lista-pets-feed"></div>
+                </section>
+
+                <!-- PARCEIROS E CUPONS -->
+                <section id="aba-parceiros" class="app-section" style="display: none;">
+                    <h3 style="text-align: center; color: var(--secondary-color); margin-bottom: 15px;">Clube de Vantagens</h3>
+                    <div id="lista-cupons" class="pets-grid"></div>
+                </section>
+
+                <!-- ÁREA DE PERFIL PRIVADO -->
+                <section id="aba-perfil" class="app-section" style="display: none; position: relative;">
+                    <div class="perfil-tabs">
+                        <div id="tab-meus-dados" class="perfil-tab ativo" onclick="alternarAbaPerfil('dados')">Meus Dados</div>
+                        <div id="tab-meus-favoritos" class="perfil-tab" onclick="alternarAbaPerfil('favoritos')">Fotos Favoritas</div>
+                    </div>
+
+                    <div id="conteudo-dados-perfil">
+                        <div class="perfil-card">
+                            <div class="perfil-foto-simulada">👤</div>
+                            <p id="info-perfil-nome"><strong>Nome:</strong> Carregando...</p>
+                            <p id="info-perfil-tipo"><strong>Tipo:</strong> Carregando...</p>
+                            
+                            <div class="perfil-bio-container" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                                <p id="info-perfil-bio" style="font-size: 0.95rem; color: #555; text-align: justify; margin-bottom: 10px;"><strong>Sobre:</strong> Nenhuma informação cadastrada.</p>
+                                <div class="perfil-acoes">
+                                    <button class="btn-acao btn-editar" onclick="editarBio()" style="font-size: 0.8rem; padding: 5px 10px;">✏️ Editar Sobre</button>
+                                    <button class="btn-acao btn-excluir" onclick="excluirBio()" style="font-size: 0.8rem; padding: 5px 10px;">🗑️ Limpar</button>
+                                </div>
+                            </div>
+                            
+                            <div class="perfil-acoes" style="margin-top: 20px;">
+                                <button class="btn-acao btn-editar" onclick="editarPerfil()">⚙️ Alterar Nome</button>
+                                <button class="btn-acao btn-excluir" onclick="excluirConta()">Sair da Conta</button>
+                            </div>
+                        </div>
+                        <div class="acoes-extras" style="margin-top: 15px;">
+                            <button class="btn-submit btn-flutuante" onclick="abrirModalPet()">➕ Cadastrar Novo Pet para Doação</button>
+                        </div>
+                    </div>
+
+                    <div id="conteudo-favoritos-perfil" style="display: none;">
+                        <h3 style="text-align: center; color: var(--secondary-color); margin-bottom: 15px;">Meus Pets Salvos</h3>
+                        <div id="lista-favoritos" class="grid-fotos-favoritos"></div>
+                    </div>
+                    
+                    <button class="fab-chat-perfil" onclick="alert('Iniciando central de ajuda DoaPets...')">💬</button>
+                </section>
+            </main>
+
+            <!-- NAVEGAÇÃO INFERIOR -->
+            <nav class="premium-bottom-nav">
+                <a href="#" class="premium-nav-item ativo" onclick="trocarAba('home')">
+                    <span class="p-nav-icon">🏠</span>
+                    <span class="p-nav-text">Home</span>
+                </a>
+                <a href="#" class="premium-nav-item" onclick="trocarAba('feed')">
+                    <span class="p-nav-icon">📋</span>
+                    <span class="p-nav-text">Feeds</span>
+                </a>
+                
+                <div class="premium-nav-item-center" onclick="abrirModalEscolhaPet()">
+                    <div class="paw-center-btn">🐾</div>
+                </div>
+
+                <a href="#" class="premium-nav-item" onclick="trocarAba('parceiros')">
+                    <span class="p-nav-icon">🔔</span>
+                    <span class="p-nav-text">Percepções</span>
+                </a>
+                <a href="#" class="premium-nav-item" onclick="trocarAba('perfil')">
+                    <span class="p-nav-icon">👤</span>
+                    <span class="p-nav-text">Perfis</span>
+                </a>
+            </nav>
         </div>
 
-        <div id="clientEditModal" class="modal-overlay" onclick="closeClientEditModal(event)">
-            <div class="modal-content" onclick="event.stopPropagation()">
-                <div class="modal-header">
-                    <h3 style="margin:0;">Editar Perfil</h3>
-                    <button class="back-btn" onclick="closeClientEditModal()"><span class="material-icons-outlined">close</span></button>
+        <!-- POPUP DA PATINHA -->
+        <div id="modal-escolha-pet" class="modal-overlay" style="display: none;">
+            <div class="modal-content text-center">
+                <span class="close-modal" onclick="fecharModalEscolhaPet()">&times;</span>
+                <h3 style="margin-bottom: 10px; color: var(--secondary-color);">Qual bichinho você quer adotar?</h3>
+                <p style="font-size: 0.9rem; color:#666; margin-bottom: 20px;">Escolha para filtrar os melhores companheiros no seu feed</p>
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <button class="btn-submit" style="background:#fff; color:var(--secondary-color); border:2px solid #ddd; font-size: 2.5rem; padding: 10px 20px;" onclick="selecionarRapidoEspecie('Cachorro')">🐶<br><span style="font-size:1rem; font-weight:bold;">Cachorro</span></button>
+                    <button class="btn-submit" style="background:#fff; color:var(--secondary-color); border:2px solid #ddd; font-size: 2.5rem; padding: 10px 20px;" onclick="selecionarRapidoEspecie('Gato')">🐱<br><span style="font-size:1rem; font-weight:bold;">Gato</span></button>
                 </div>
-                <div class="modal-body">
+            </div>
+        </div>
+
+        <!-- MODAL DE CADASTRO PREMIUM -->
+        <div id="modal-cadastro-pet" class="modal-overlay" style="display: none;">
+            <div class="modal-content modal-premium">
+                <span class="close-modal" onclick="fecharModalPet()">&times;</span>
+                
+                <div class="modal-header-premium">
+                    <div class="modal-icon-bg">🐶</div>
+                    <h3>Cadastrar Pet</h3>
+                    <p>Encontre um lar cheio de amor e carinho</p>
+                </div>
+
+                <form id="form-pet" class="form-premium">
                     <div class="input-group">
-                        <label>Foto de Perfil (URL)</label>
-                        <input type="text" id="editClientPhoto" class="input-field" placeholder="Cole o link da imagem (opcional)">
+                        <label for="nomePet">Nome do Pet</label>
+                        <input type="text" id="nomePet" placeholder="Ex: Rex, Thor, Mia..." required>
                     </div>
-                    <div class="input-group"><label>Nome Completo</label><input type="text" id="editClientName" class="input-field"></div>
-                    <div class="input-group"><label>E-mail</label><input type="email" id="editClientEmail" class="input-field"></div>
-                    <div class="input-group"><label>Telefone / WhatsApp</label><input type="tel" id="editClientPhone" class="input-field" placeholder="(00) 00000-0000"></div>
-                    <div class="input-group"><label>Nova Senha (opcional)</label><input type="password" id="editClientPass" class="input-field" placeholder="Deixe em branco para não alterar"></div>
-                    <button class="btn-primary" style="margin-top: 16px;" onclick="saveClientProfile()">Salvar Alterações</button>
-                </div>
+                    
+                    <div class="input-row">
+                        <div class="input-group" style="flex: 1;">
+                            <label for="especie">Espécie</label>
+                            <select id="especie" required>
+                                <option value="">Selecione...</option>
+                                <option value="Cachorro">Cachorro</option>
+                                <option value="Gato">Gato</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="flex: 1;">
+                            <label for="idade">Idade</label>
+                            <input type="text" id="idade" placeholder="Ex: 2 meses" required>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="localPet">Sua Cidade - Estado</label>
+                        <input type="text" id="localPet" placeholder="Ex: Formiga - MG" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="whatsPet">WhatsApp para Contato (Só números)</label>
+                        <input type="tel" id="whatsPet" placeholder="Ex: 37999999999" required>
+                    </div>
+                    
+                    <div class="input-group upload-box-premium">
+                        <label>Foto do Pet</label>
+                        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                            <button type="button" id="btn-usar-url" class="btn-filtro-especie ativo" style="flex:1;" onclick="alternarTipoFoto('url')">Link (URL)</button>
+                            <button type="button" id="btn-usar-arquivo" class="btn-filtro-especie" style="flex:1;" onclick="alternarTipoFoto('arquivo')">Galeria</button>
+                        </div>
+                        <input type="url" id="fotoPetUrl" placeholder="Cole o link da imagem aqui" required>
+                        <input type="file" id="fotoPetArquivo" accept="image/*" style="display: none;">
+                        <img id="preview-foto" src="" style="display:none; width:100%; max-height:200px; object-fit:cover; margin-top:10px; border-radius:12px;">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="descricao">História / Descrição</label>
+                        <textarea id="descricao" rows="3" placeholder="Temperamento, vacinas, motivo da doação..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Publicar no Feed</button>
+                </form>
             </div>
         </div>
 
-        <div id="screen-business-home" class="screen">
-            <header class="header">
-                <div>
-                    <h2 style="color: var(--business-color);">Painel</h2>
-                    <p id="dashBusName">Empresa</p>
-                </div>
-                <button class="back-btn" style="color: var(--danger-color);" onclick="logout()">
-                    <span class="material-icons-outlined">exit_to_app</span>
-                </button>
-            </header>
-            <section class="section-container">
-                
-                <div style="background: var(--card-background); padding: 20px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
-                    <div>
-                        <h3 style="margin: 0; font-size: 18px;">Status da Loja</h3>
-                        <p style="font-size: 13px; margin-top: 4px; font-weight: 600;" id="dashStatusText">Atualmente Fechado</p>
-                    </div>
-                    <button id="btnToggleStatus" class="btn-outline" style="width: auto; margin: 0; padding: 10px 20px;" onclick="toggleBusinessStatus()">Abrir</button>
-                </div>
-
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-                    <h3 style="margin:0;">Relatório de Desempenho</h3>
-                    <input type="month" id="reportMonth" class="input-field" style="padding: 8px; width: auto; font-size: 13px;" onchange="updateBusinessDashboardUI()">
-                </div>
-
-                <div class="dashboard-stats" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
-                    <div class="stat-card" style="padding: 16px;">
-                        <span class="material-icons-outlined" style="color: var(--primary-blue); margin-bottom: 8px; font-size: 28px;">today</span>
-                        <h3 id="dashApptsToday" style="font-size: 22px;">0</h3>
-                        <p>Agendamentos Hoje</p>
-                    </div>
-                    <div class="stat-card" style="padding: 16px;">
-                        <span class="material-icons-outlined" style="color: var(--success-color); margin-bottom: 8px; font-size: 28px;">payments</span>
-                        <h3 id="dashEarnings" style="font-size: 22px; color: var(--success-color);">R$ 0,00</h3>
-                        <p>Ganhos do Mês</p>
-                    </div>
-                    <div class="stat-card" style="padding: 16px;">
-                        <span class="material-icons-outlined" style="color: var(--business-color); margin-bottom: 8px; font-size: 28px;">groups</span>
-                        <h3 id="dashClientCount" style="font-size: 22px;">0</h3>
-                        <p>Clientes no Mês</p>
-                    </div>
-                    <div class="stat-card" style="padding: 16px;">
-                        <span class="material-icons-outlined" style="color: var(--star-yellow); margin-bottom: 8px; font-size: 28px;">star</span>
-                        <h3 id="dashRating" style="font-size: 22px;">0.0</h3>
-                        <p>Avaliação Média</p>
-                    </div>
-                </div>
-
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; margin-top: 24px;">
-                    <h3 style="margin:0;">Lista de Clientes</h3>
-                </div>
-                <button id="btnVerClientes" class="btn-outline" style="color: var(--primary-blue); border-color: var(--primary-blue); margin-bottom: 32px;" onclick="openClientModal()">
-                    <span class="material-icons-outlined">format_list_bulleted</span> Ver Clientes do Mês
-                </button>
-
-                <button class="btn-primary btn-business" style="padding: 18px;" onclick="navigate('edit-business', 'business')">
-                    <span class="material-icons-outlined" style="vertical-align: middle; margin-right: 8px;">edit</span>
-                    Editar Perfil, Galeria e Horários
-                </button>
-            </section>
-        </div>
-
-        <div id="clientListModal" class="modal-overlay" onclick="closeClientModal(event)">
-            <div class="modal-content" onclick="event.stopPropagation()">
-                <div class="modal-header">
-                    <h3 style="margin:0;">Clientes do Mês Selecionado</h3>
-                    <button class="back-btn" onclick="closeClientModal()"><span class="material-icons-outlined">close</span></button>
-                </div>
-                <div class="modal-body" id="dashboardClientList">
-                    </div>
+        <!-- MODAL COMENTÁRIOS -->
+        <div id="modal-comentarios" class="modal-overlay" style="display: none;">
+            <div class="modal-content modal-comentarios-conteudo">
+                <span class="close-modal" onclick="fecharComentarios()">&times;</span>
+                <h3 id="titulo-comentarios">Comentários</h3>
+                <div id="lista-comentarios" class="lista-comentarios-area"></div>
+                <form id="form-comentario" class="form-comentario">
+                    <input type="text" id="input-comentario" placeholder="Escreva um comentário..." required>
+                    <button type="submit">Enviar</button>
+                </form>
             </div>
         </div>
 
-        <div id="screen-agenda-business" class="screen">
-            <header class="header"><h2 style="color: var(--business-color);">Agenda e Pedidos</h2></header>
-            <section class="section-container" id="businessAgendaList"></section>
+        <!-- MODAL PERFIL PÚBLICO -->
+        <div id="modal-perfil-publico" class="modal-overlay" style="display: none;">
+            <div class="modal-content text-center">
+                <span class="close-modal" onclick="fecharPerfilPublico()">&times;</span>
+                <div class="perfil-foto-simulada" id="foto-perfil-publico">👤</div>
+                <h3 id="nome-perfil-publico">Nome do Usuário</h3>
+                <p id="tipo-perfil-publico" style="color: #666; margin-bottom: 5px;">Tipo de Perfil</p>
+                <p id="bio-perfil-publico" style="font-size: 0.9rem; color: var(--text-color); margin-bottom: 15px; padding: 10px; background: #f9f9f9; border-radius: 8px;">Sem descrição fornecida.</p>
+            </div>
         </div>
 
-        <div id="screen-edit-business" class="screen">
-            <header class="header">
-                <button class="back-btn" onclick="navigate('business-home', 'business')"><span class="material-icons-outlined">arrow_back</span></button>
-                <h2 style="color: var(--business-color);">Editar Loja</h2>
-                <div style="width: 24px;"></div>
-            </header>
-            <section class="section-container">
-                <div class="input-group"><label>URL da Logo (Imagem)</label><input type="text" id="editBusLogo" class="input-field" placeholder="Link para a imagem da logo"></div>
-                <div class="input-group"><label>Nome do Estabelecimento</label><input type="text" id="editBusName" class="input-field"></div>
-                <div class="input-group"><label>Telefone / WhatsApp</label><input type="tel" id="editBusPhone" class="input-field"></div>
-                <div class="input-group"><label>Endereço Completo</label><input type="text" id="editBusAddress" class="input-field" placeholder="Rua, Número, Bairro"></div>
-                <div class="input-group"><label>Descrição Curta</label><input type="text" id="editBusDesc" class="input-field"></div>
-                <button class="btn-primary btn-business" onclick="saveBusinessEdits()">Salvar Informações</button>
-
-                <h3 style="margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 24px;">Gerenciar Horários Disponíveis</h3>
-                <div style="display:flex; gap:12px; margin-bottom: 12px;">
-                    <input type="date" id="newSlotDate" class="input-field" style="flex:1;">
-                    <input type="time" id="newSlotTime" class="input-field" style="flex:1;">
+        <!-- MODAL: CHAT INTERNO -->
+        <div id="modal-chat" class="modal-overlay" style="display: none;">
+            <div class="modal-content modal-comentarios-conteudo" style="background: #e5ddd5;">
+                <span class="close-modal" onclick="fecharChat()">&times;</span>
+                <div style="background: var(--secondary-color); color: white; padding: 10px; border-radius: 10px 10px 0 0; margin: -1.5rem -1.5rem 10px -1.5rem; text-align: center;">
+                    <h3 id="titulo-chat" style="color: white; font-size: 1.1rem; margin:0;">Chat</h3>
                 </div>
-                <button class="btn-outline" style="color: var(--business-color); border-color: var(--business-color);" onclick="addSlot()">+ Adicionar Horário</button>
-                <div id="editProfSlotsList" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px;"></div>
-
-                <h3 style="margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 24px;">Imagens do Local (Carrossel)</h3>
-                <div style="display:flex; gap:12px; margin-bottom: 12px;">
-                    <input type="text" id="newImageUrl" class="input-field" placeholder="Cole o Link (URL) da Imagem" style="flex:1;">
+                <div id="historico-chat" class="lista-comentarios-area" style="background: transparent;">
+                    <div class="chat-balao recebido">
+                        <p>Olá! Este é um chat interno de segurança do DoaPets. Quando estiverem prontos para finalizar a adoção, clique no botão abaixo para ir ao WhatsApp.</p>
+                        <span class="chat-hora">Sistema</span>
+                    </div>
                 </div>
-                <button class="btn-outline" style="color: var(--business-color); border-color: var(--business-color);" onclick="addPortfolioImage()">+ Adicionar Imagem</button>
-                <div class="edit-portfolio-grid" id="editProfImagesList"></div>
-
-                <h3 style="margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 24px;">Novo Serviço</h3>
-                <div style="display:flex; gap:12px; margin-bottom: 12px;">
-                    <input type="text" id="newServName" class="input-field" placeholder="Ex: Corte" style="flex:2;">
-                    <input type="number" id="newServPrice" class="input-field" placeholder="Valor" style="flex:1;">
+                <div style="text-align: center; margin-top: 10px;">
+                    <button id="btn-ir-whatsapp" class="btn-submit" style="background-color: #25D366; border-radius: 20px;">Continuar no WhatsApp</button>
                 </div>
-                <button class="btn-outline" style="color: var(--business-color); border-color: var(--business-color);" onclick="addService()">+ Adicionar Serviço</button>
-                <div id="editProfServicesList" style="margin-top: 16px;"></div>
-            </section>
+            </div>
         </div>
-
-        <nav class="bottom-nav client-nav" id="nav-client">
-            <div id="nav-item-home" class="nav-item active" onclick="navigate('home', 'client')">
-                <span class="material-icons-outlined">home</span><span>Início</span>
-            </div>
-            <div id="nav-item-agenda" class="nav-item" onclick="navigate('agenda-client', 'client')">
-                <span class="material-icons-outlined">calendar_today</span><span>Agenda</span>
-            </div>
-            <div id="nav-item-chat" class="nav-item" onclick="navigate('chat-list', 'client')">
-                <span class="material-icons-outlined">chat</span><span>Chat</span>
-            </div>
-            <div id="nav-item-profile" class="nav-item" onclick="navigate('profile-client', 'client')">
-                <span class="material-icons-outlined">person</span><span>Perfil</span>
-            </div>
-        </nav>
-
-        <nav class="bottom-nav business-nav" id="nav-business">
-            <div id="nav-bus-home" class="nav-item active" onclick="navigate('business-home', 'business')">
-                <span class="material-icons-outlined">dashboard</span><span>Painel</span>
-            </div>
-            <div id="nav-bus-agenda" class="nav-item" onclick="navigate('agenda-business', 'business')">
-                <span class="material-icons-outlined">event_note</span><span>Agenda</span>
-            </div>
-            <div id="nav-bus-chat" class="nav-item" onclick="navigate('chat-list', 'business')">
-                <span class="material-icons-outlined">chat</span><span>Chat</span>
-            </div>
-            <div class="nav-item" onclick="navigate('edit-business', 'business')">
-                <span class="material-icons-outlined">store</span><span>Loja</span>
-            </div>
-        </nav>
 
     </div>
 
-    <script>
-        let clientsDB = [], businessDB = [], appointmentsDB = [], messagesDB = [];
-        
-        try {
-            clientsDB = JSON.parse(localStorage.getItem('db_clients')) || [];
-            businessDB = JSON.parse(localStorage.getItem('db_businesses')) || [];
-            appointmentsDB = JSON.parse(localStorage.getItem('db_appointments')) || [];
-            messagesDB = JSON.parse(localStorage.getItem('db_messages')) || [];
-        } catch(e) {
-            console.error("DB Error", e);
-            localStorage.clear();
-        }
-        
-        let loggedClient = null;
-        let loggedBusiness = null;
-        let selectedServices = []; 
-        let selectedSlotId = null; 
-        let currentFilter = 'todos';
-        let currentViewedBusinessId = null;
-
-        let activeChatClientId = null;
-        let activeChatBusinessId = null;
-        let previousScreenForChat = 'home';
-
-        function fixAppData() {
-            if(confirm("Deseja apagar todos os dados do aplicativo para resetar?")) {
-                localStorage.clear(); location.reload();
-            }
-        }
-
-        // --- NAVEGAÇÃO ---
-        function navigate(screenId, userType = null) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('screen-' + screenId).classList.add('active');
-            
-            const navClient = document.getElementById('nav-client');
-            const navBusiness = document.getElementById('nav-business');
-            navClient.classList.remove('active-nav');
-            navBusiness.classList.remove('active-nav');
-
-            if (userType === 'client' && loggedClient) {
-                navClient.classList.add('active-nav');
-                document.querySelectorAll('.client-nav .nav-item').forEach(n => n.classList.remove('active'));
-                
-                if(screenId === 'home') { 
-                    document.getElementById('nav-item-home').classList.add('active'); 
-                    document.getElementById('homeClientName').innerText = `Olá, ${loggedClient.name.split(' ')[0]}`; 
-                    
-                    // Avatar na Home
-                    const homeAvatar = document.getElementById('homeClientAvatarBox');
-                    if(loggedClient.photo && loggedClient.photo.trim() !== "") {
-                        homeAvatar.innerHTML = `<img src="${loggedClient.photo}" style="width:100%; height:100%; object-fit:cover;">`;
-                    } else {
-                        homeAvatar.innerHTML = `<span class="material-icons-outlined">person</span>`;
-                    }
-                    
-                    renderClientHome(); 
-                }
-                if(screenId === 'agenda-client') { document.getElementById('nav-item-agenda').classList.add('active'); renderClientAgenda(); }
-                if(screenId === 'chat-list') { document.getElementById('nav-item-chat').classList.add('active'); renderChatList(); }
-                if(screenId === 'profile-client') { 
-                    document.getElementById('nav-item-profile').classList.add('active'); 
-                    
-                    // Renderiza Avatar Centralizado com ou sem foto
-                    const avatarEl = document.getElementById('clientProfileAvatar');
-                    if(loggedClient.photo && loggedClient.photo.trim() !== "") {
-                        avatarEl.innerHTML = `<img src="${loggedClient.photo}">`;
-                        avatarEl.style.background = "transparent";
-                    } else {
-                        avatarEl.innerHTML = loggedClient.name.charAt(0).toUpperCase();
-                        avatarEl.style.background = "linear-gradient(135deg, var(--primary-blue) 0%, #00C6FF 100%)";
-                    }
-
-                    document.getElementById('clientProfileName').innerText = loggedClient.name; 
-                    document.getElementById('clientProfileEmail').innerText = loggedClient.email; 
-                    document.getElementById('clientProfilePhone').innerText = loggedClient.phone || "Não cadastrado"; 
-                }
-            } else if (userType === 'business' && loggedBusiness) {
-                navBusiness.classList.add('active-nav');
-                document.querySelectorAll('.business-nav .nav-item').forEach(n => n.classList.remove('active'));
-                
-                if(screenId === 'business-home') { document.getElementById('nav-bus-home').classList.add('active'); updateBusinessDashboardUI(); }
-                if(screenId === 'agenda-business') { document.getElementById('nav-bus-agenda').classList.add('active'); renderBusinessAgenda(); }
-                if(screenId === 'chat-list') { document.getElementById('nav-bus-chat').classList.add('active'); renderChatList(); }
-                if(screenId === 'edit-business') loadEditScreen();
-            }
-        }
-
-        // --- AUTH E EDIÇÃO CLIENTE ---
-        function registerClient() {
-            const name = document.getElementById('regClientName').value.trim();
-            const email = document.getElementById('regClientEmail').value.trim();
-            const phone = document.getElementById('regClientPhone').value.trim();
-            const pass = document.getElementById('regClientPass').value;
-            if(!name || !email || !pass) return alert("Preencha campos obrigatórios!");
-            if(clientsDB.find(c => c.email === email)) return alert("E-mail em uso!");
-            const newClient = { id: Date.now().toString(), name, email, phone, pass, photo: "" };
-            clientsDB.push(newClient); localStorage.setItem('db_clients', JSON.stringify(clientsDB));
-            loggedClient = newClient; navigate('home', 'client');
-        }
-
-        function authClient() {
-            const email = document.getElementById('loginClientEmail').value.trim();
-            const pass = document.getElementById('loginClientPass').value;
-            const client = clientsDB.find(c => c.email === email && c.pass === pass);
-            if(client) { loggedClient = client; navigate('home', 'client'); } 
-            else alert("Credenciais inválidas.");
-        }
-
-        // Lógica do Modal de Edição do Cliente
-        function openClientEditModal() {
-            document.getElementById('editClientPhoto').value = loggedClient.photo || "";
-            document.getElementById('editClientName').value = loggedClient.name;
-            document.getElementById('editClientEmail').value = loggedClient.email;
-            document.getElementById('editClientPhone').value = loggedClient.phone || "";
-            document.getElementById('editClientPass').value = ""; // Limpa para segurança
-            document.getElementById('clientEditModal').classList.add('active');
-        }
-        
-        function closeClientEditModal(e) {
-            if(e && e.target !== document.getElementById('clientEditModal') && e.type !== 'click') return; 
-            document.getElementById('clientEditModal').classList.remove('active');
-        }
-
-        function saveClientProfile() {
-            const photo = document.getElementById('editClientPhoto').value.trim();
-            const name = document.getElementById('editClientName').value.trim();
-            const email = document.getElementById('editClientEmail').value.trim();
-            const phone = document.getElementById('editClientPhone').value.trim();
-            const pass = document.getElementById('editClientPass').value;
-
-            if(!name || !email) return alert("Nome e e-mail são obrigatórios.");
-
-            if(email !== loggedClient.email && clientsDB.find(c => c.email === email)) {
-                return alert("Este e-mail já está em uso.");
-            }
-
-            loggedClient.photo = photo;
-            loggedClient.name = name;
-            loggedClient.email = email;
-            loggedClient.phone = phone;
-            if(pass) loggedClient.pass = pass;
-
-            const index = clientsDB.findIndex(c => c.id === loggedClient.id);
-            if(index !== -1) {
-                clientsDB[index] = loggedClient;
-                localStorage.setItem('db_clients', JSON.stringify(clientsDB));
-            }
-
-            closeClientEditModal();
-            navigate('profile-client', 'client'); // Recarrega tela
-            alert("Perfil atualizado com sucesso!");
-        }
-
-        function registerBusiness() {
-            const type = document.getElementById('regBusType').value;
-            const name = document.getElementById('regBusName').value.trim();
-            const email = document.getElementById('regBusEmail').value.trim();
-            const phone = document.getElementById('regBusPhone').value.trim();
-            const pass = document.getElementById('regBusPass').value;
-            if(!name || !email || !pass) return alert("Preencha obrigatórios!");
-            if(businessDB.find(b => b.email === email)) return alert("E-mail em uso!");
-            const newBus = { id: Date.now().toString(), type, name, email, phone, pass, description: "", address: "", logo: "", services: [], portfolio: [], availableSlots: [], isOpen: true };
-            businessDB.push(newBus); localStorage.setItem('db_businesses', JSON.stringify(businessDB));
-            loggedBusiness = newBus; navigate('business-home', 'business');
-        }
-
-        function authBusiness() {
-            const email = document.getElementById('loginBusEmail').value.trim();
-            const pass = document.getElementById('loginBusPass').value;
-            const bus = businessDB.find(b => b.email === email && b.pass === pass);
-            if(bus) { 
-                if(!bus.portfolio) bus.portfolio = []; if(!bus.logo) bus.logo = ""; if(!bus.availableSlots) bus.availableSlots = []; 
-                loggedBusiness = bus; navigate('business-home', 'business'); 
-            } else alert("Credenciais inválidas.");
-        }
-
-        function logout() { loggedClient = null; loggedBusiness = null; navigate('login-choice'); }
-
-        // --- SISTEMA DE CHAT ---
-        function renderChatList() {
-            const container = document.getElementById('chatListContainer'); container.innerHTML = ''; let groupedChats = {};
-            if(loggedClient) {
-                messagesDB.filter(m => m.clientId === loggedClient.id).forEach(m => { if(!groupedChats[m.businessId]) groupedChats[m.businessId] = []; groupedChats[m.businessId].push(m); });
-                if(Object.keys(groupedChats).length === 0) { container.innerHTML = '<div class="empty-state"><span class="material-icons-outlined">chat_bubble_outline</span><p>Nenhuma conversa iniciada.</p></div>'; return; }
-                for(let busId in groupedChats) {
-                    let bus = businessDB.find(b => b.id === busId); if(!bus) continue;
-                    let msgs = groupedChats[busId]; let lastMsg = msgs[msgs.length - 1];
-                    let avatar = bus.logo ? `<img src="${bus.logo}" class="chat-avatar">` : `<div class="chat-avatar" style="background:var(--business-color);">${bus.name.charAt(0).toUpperCase()}</div>`;
-                    container.innerHTML += `<div class="chat-list-item" onclick="openChatView('${loggedClient.id}', '${bus.id}', '${bus.name.replace(/'/g, "\\'")}', 'chat-list')">${avatar}<div style="flex:1;"><div style="display:flex; justify-content:space-between; margin-bottom:4px;"><strong style="font-size:15px;">${bus.name}</strong><span style="font-size:11px; color:var(--text-muted);">${lastMsg.time}</span></div><p style="font-size:13px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${lastMsg.text}</p></div></div>`;
-                }
-            } else if(loggedBusiness) {
-                messagesDB.filter(m => m.businessId === loggedBusiness.id).forEach(m => { if(!groupedChats[m.clientId]) groupedChats[m.clientId] = []; groupedChats[m.clientId].push(m); });
-                if(Object.keys(groupedChats).length === 0) { container.innerHTML = '<div class="empty-state"><span class="material-icons-outlined">chat_bubble_outline</span><p>Sua caixa de entrada está vazia.</p></div>'; return; }
-                for(let clientId in groupedChats) {
-                    let client = clientsDB.find(c => c.id === clientId); if(!client) continue;
-                    let msgs = groupedChats[clientId]; let lastMsg = msgs[msgs.length - 1];
-                    
-                    let avatarHtml = client.photo ? `<img src="${client.photo}" class="chat-avatar">` : `<div class="chat-avatar" style="background:var(--primary-blue);">${client.name.charAt(0).toUpperCase()}</div>`;
-
-                    container.innerHTML += `<div class="chat-list-item" onclick="openChatView('${client.id}', '${loggedBusiness.id}', '${client.name.replace(/'/g, "\\'")}', 'chat-list')">${avatarHtml}<div style="flex:1;"><div style="display:flex; justify-content:space-between; margin-bottom:4px;"><strong style="font-size:15px;">${client.name}</strong><span style="font-size:11px; color:var(--text-muted);">${lastMsg.time}</span></div><p style="font-size:13px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${lastMsg.text}</p></div></div>`;
-                }
-            }
-        }
-
-        function startChatFromProfile() {
-            const bus = businessDB.find(b => b.id === currentViewedBusinessId); if(!bus) return;
-            openChatView(loggedClient.id, bus.id, bus.name, 'perfil');
-        }
-
-        function openChatView(clientId, businessId, partnerName, fromScreen) {
-            activeChatClientId = clientId; activeChatBusinessId = businessId; previousScreenForChat = fromScreen;
-            document.getElementById('chatActiveName').innerText = partnerName;
-            navigate('chat-view'); renderActiveMessages();
-        }
-
-        function closeChatView() { const userType = loggedClient ? 'client' : 'business'; navigate(previousScreenForChat, userType); }
-
-        function sendMessage() {
-            const input = document.getElementById('chatInputText'); const text = input.value.trim(); if(!text) return;
-            const senderType = loggedClient ? 'client' : 'business';
-            const now = new Date(); const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-            messagesDB.push({ id: Date.now().toString(), clientId: activeChatClientId, businessId: activeChatBusinessId, senderType: senderType, text: text, time: timeStr });
-            localStorage.setItem('db_messages', JSON.stringify(messagesDB)); input.value = ''; renderActiveMessages();
-        }
-
-        function renderActiveMessages() {
-            const area = document.getElementById('chatMessagesArea'); area.innerHTML = '';
-            const chatMsgs = messagesDB.filter(m => m.clientId === activeChatClientId && m.businessId === activeChatBusinessId);
-            const myType = loggedClient ? 'client' : 'business';
-            if(chatMsgs.length === 0) { area.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">Envie a primeira mensagem para iniciar a conversa.</div>`; return; }
-            chatMsgs.forEach(m => { const bubbleClass = m.senderType === myType ? 'sent' : 'received'; area.innerHTML += `<div class="chat-bubble ${bubbleClass}">${m.text}<span class="chat-time">${m.time}</span></div>`; });
-            setTimeout(() => { area.scrollTop = area.scrollHeight; }, 50);
-        }
-        document.getElementById('chatInputText').addEventListener('keypress', function (e) { if (e.key === 'Enter') sendMessage(); });
-
-        // --- RATING E DASHBOARD ---
-        function getBusinessRating(busId) {
-            const busAppts = appointmentsDB.filter(a => a.businessId === busId && a.rating > 0);
-            if(busAppts.length === 0) return { avg: "0.0", count: 0 };
-            const sum = busAppts.reduce((acc, curr) => acc + curr.rating, 0);
-            return { avg: (sum / busAppts.length).toFixed(1), count: busAppts.length };
-        }
-        function rateAppointment(appId) {
-            const note = prompt("Avalie o serviço de 1 a 5 estrelas:"); const rating = parseInt(note);
-            if(isNaN(rating) || rating < 1 || rating > 5) return alert("Nota inválida! Digite de 1 a 5.");
-            const idx = appointmentsDB.findIndex(a => a.id === appId);
-            if(idx !== -1) { appointmentsDB[idx].rating = rating; localStorage.setItem('db_appointments', JSON.stringify(appointmentsDB)); alert("Avaliação salva!"); renderClientAgenda(); }
-        }
-
-        function toggleBusinessStatus() { loggedBusiness.isOpen = !loggedBusiness.isOpen; updateBusinessDB(); updateBusinessDashboardUI(); }
-        
-        function openClientModal() { document.getElementById('clientListModal').classList.add('active'); }
-        function closeClientModal(e) { 
-            if(e && e.target !== document.getElementById('clientListModal') && e.type !== 'click') return; 
-            document.getElementById('clientListModal').classList.remove('active'); 
-        }
-
-        function updateBusinessDashboardUI() {
-            document.getElementById('dashBusName').innerText = loggedBusiness.name;
-            const statusText = document.getElementById('dashStatusText'); const btnToggle = document.getElementById('btnToggleStatus');
-            if(loggedBusiness.isOpen) { statusText.innerText = "Aberto para agendamentos"; statusText.style.color = "var(--success-color)"; btnToggle.innerText = "Fechar Loja"; btnToggle.style.borderColor = "var(--danger-color)"; btnToggle.style.color = "var(--danger-color)"; } 
-            else { statusText.innerText = "Fechado temporariamente"; statusText.style.color = "var(--danger-color)"; btnToggle.innerText = "Abrir Loja"; btnToggle.style.borderColor = "var(--success-color)"; btnToggle.style.color = "var(--success-color)"; }
-            
-            const myAppts = appointmentsDB.filter(a => a.businessId === loggedBusiness.id);
-            const today = new Date(); const dd = String(today.getDate()).padStart(2, '0'); const mm = String(today.getMonth() + 1).padStart(2, '0'); const yyyy = today.getFullYear(); const todayStr = `${dd}/${mm}/${yyyy}`;
-            
-            const reportInput = document.getElementById('reportMonth');
-            let selectedYear = "", selectedMonth = "";
-            if(reportInput.value) { [selectedYear, selectedMonth] = reportInput.value.split('-'); } 
-            else { selectedMonth = mm; selectedYear = String(yyyy); reportInput.value = `${selectedYear}-${selectedMonth}`; }
-
-            let apptsToday = 0; let monthlyEarnings = 0; let monthlyClients = [];
-            const rating = getBusinessRating(loggedBusiness.id); document.getElementById('dashRating').innerText = rating.avg;
-
-            myAppts.forEach(app => {
-                const parts = app.date.split('/');
-                if(parts.length === 3) {
-                    const appMonth = parts[1]; const appYear = parts[2];
-                    if (app.date === todayStr) apptsToday++;
-                    if (appMonth === selectedMonth && appYear === selectedYear) {
-                        monthlyClients.push(app);
-                        if (app.status === 'completed' || app.status === 'accepted') monthlyEarnings += app.total;
-                    }
-                }
-            });
-
-            document.getElementById('dashApptsToday').innerText = apptsToday;
-            document.getElementById('dashEarnings').innerText = `R$ ${monthlyEarnings.toFixed(2)}`;
-            document.getElementById('dashClientCount').innerText = monthlyClients.length;
-
-            const clientListEl = document.getElementById('dashboardClientList'); clientListEl.innerHTML = '';
-            if(monthlyClients.length === 0) {
-                clientListEl.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:13px; padding:24px;">Nenhum agendamento para este mês.</p>';
-            } else {
-                monthlyClients.reverse().forEach(app => {
-                    let statusColor = 'var(--warning-color)'; let statusLabel = 'Pendente';
-                    if(app.status === 'completed') { statusColor = 'var(--success-color)'; statusLabel = 'Concluído'; }
-                    else if(app.status === 'accepted') { statusColor = 'var(--primary-blue)'; statusLabel = 'Confirmado'; }
-                    else if(app.status === 'rejected') { statusColor = 'var(--danger-color)'; statusLabel = 'Recusado'; }
-                    clientListEl.innerHTML += `<div class="client-month-item" style="background:var(--card-background); border:1px solid var(--border-color); padding:12px; border-radius:8px; margin-bottom:8px;"><div><strong style="font-size:14px; display:block; color:var(--text-main);">${app.clientName}</strong><span style="font-size:12px; color:var(--text-muted);">${app.date} às ${app.time}</span></div><div style="text-align:right;"><strong style="font-size:14px; color:var(--text-main);">R$ ${app.total.toFixed(2)}</strong><span style="font-size:11px; display:block; font-weight:700; color:${statusColor}">${statusLabel}</span></div></div>`;
-                });
-            }
-        }
-
-        // --- EMPRESA EDITAR ---
-        function loadEditScreen() {
-            document.getElementById('editBusLogo').value = loggedBusiness.logo || ""; document.getElementById('editBusName').value = loggedBusiness.name; document.getElementById('editBusPhone').value = loggedBusiness.phone || ""; document.getElementById('editBusAddress').value = loggedBusiness.address || ""; document.getElementById('editBusDesc').value = loggedBusiness.description || "";
-            renderEditSlots(); renderEditPortfolio(); renderEditServices();
-        }
-        function saveBusinessEdits() {
-            loggedBusiness.logo = document.getElementById('editBusLogo').value.trim(); loggedBusiness.name = document.getElementById('editBusName').value; loggedBusiness.phone = document.getElementById('editBusPhone').value; loggedBusiness.address = document.getElementById('editBusAddress').value; loggedBusiness.description = document.getElementById('editBusDesc').value;
-            updateBusinessDB(); alert("Salvo!"); navigate('business-home', 'business');
-        }
-
-        function addSlot() {
-            const date = document.getElementById('newSlotDate').value; const time = document.getElementById('newSlotTime').value;
-            if(!date || !time) return alert("Selecione data e hora!");
-            if(!loggedBusiness.availableSlots) loggedBusiness.availableSlots = [];
-            if(loggedBusiness.availableSlots.some(s => s.date === date && s.time === time)) return alert("Este horário já foi adicionado!");
-            loggedBusiness.availableSlots.push({ id: Date.now().toString(), date, time });
-            loggedBusiness.availableSlots.sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
-            updateBusinessDB(); document.getElementById('newSlotTime').value = ''; renderEditSlots();
-        }
-        function removeSlot(id) { loggedBusiness.availableSlots = loggedBusiness.availableSlots.filter(s => s.id !== id); updateBusinessDB(); renderEditSlots(); }
-        function renderEditSlots() {
-            const c = document.getElementById('editProfSlotsList'); c.innerHTML = '';
-            if(!loggedBusiness.availableSlots || loggedBusiness.availableSlots.length === 0) { c.innerHTML = '<p style="font-size: 13px; color: var(--text-muted);">Nenhum horário cadastrado.</p>'; return; }
-            loggedBusiness.availableSlots.forEach(s => {
-                const parts = s.date.split('-'); const fDate = `${parts[2]}/${parts[1]}`;
-                c.innerHTML += `<div style="background: var(--card-background); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-sm);"><span style="font-size: 13px; font-weight: 600;">${fDate} - ${s.time}</span><span class="material-icons-outlined" style="font-size: 16px; color: var(--danger-color); cursor: pointer;" onclick="removeSlot('${s.id}')">close</span></div>`;
-            });
-        }
-
-        function addPortfolioImage() {
-            const url = document.getElementById('newImageUrl').value.trim(); if(!url) return;
-            if(!loggedBusiness.portfolio) loggedBusiness.portfolio = []; loggedBusiness.portfolio.push(url);
-            updateBusinessDB(); document.getElementById('newImageUrl').value = ''; renderEditPortfolio();
-        }
-        function removePortfolioImage(index) { loggedBusiness.portfolio.splice(index, 1); updateBusinessDB(); renderEditPortfolio(); }
-        function renderEditPortfolio() {
-            const c = document.getElementById('editProfImagesList'); c.innerHTML = '';
-            if(!loggedBusiness.portfolio || loggedBusiness.portfolio.length === 0) { c.innerHTML = '<p style="font-size: 13px; color: var(--text-muted); grid-column: span 3;">Nenhuma imagem adicionada.</p>'; return; }
-            loggedBusiness.portfolio.forEach((url, idx) => { c.innerHTML += `<div class="edit-portfolio-item"><img src="${url}"><button class="btn-remove" onclick="removePortfolioImage(${idx})"><span class="material-icons-outlined" style="font-size: 16px;">close</span></button></div>`; });
-        }
-
-        function addService() {
-            const name = document.getElementById('newServName').value; const price = parseFloat(document.getElementById('newServPrice').value);
-            if(!name || isNaN(price)) return;
-            if(!loggedBusiness.services) loggedBusiness.services = []; loggedBusiness.services.push({ id: Date.now(), name, price });
-            updateBusinessDB(); document.getElementById('newServName').value = ''; document.getElementById('newServPrice').value = ''; renderEditServices();
-        }
-        function removeService(id) { loggedBusiness.services = loggedBusiness.services.filter(s => s.id !== id); updateBusinessDB(); renderEditServices(); }
-        function renderEditServices() {
-            const c = document.getElementById('editProfServicesList'); c.innerHTML = '';
-            loggedBusiness.services.forEach(s => { c.innerHTML += `<div class="agenda-card" style="display:flex; justify-content:space-between; align-items:center; padding: 12px 16px;"><div><strong style="font-size:15px;">${s.name}</strong><br><span style="color:var(--primary-blue); font-weight:700;">R$ ${s.price.toFixed(2)}</span></div><button class="btn-danger" style="width:auto; padding:8px; margin:0;" onclick="removeService(${s.id})"><span class="material-icons-outlined">delete</span></button></div>`; });
-        }
-        function updateBusinessDB() { const idx = businessDB.findIndex(b => b.id === loggedBusiness.id); if(idx !== -1) businessDB[idx] = loggedBusiness; localStorage.setItem('db_businesses', JSON.stringify(businessDB)); }
-
-        // --- AGENDAS ---
-        function renderBusinessAgenda() {
-            const c = document.getElementById('businessAgendaList'); c.innerHTML = '';
-            const appts = appointmentsDB.filter(a => a.businessId === loggedBusiness.id).reverse();
-            if(appts.length === 0) { c.innerHTML = '<div class="empty-state"><span class="material-icons-outlined">event_busy</span><p>Nenhum agendamento.</p></div>'; return; }
-            appts.forEach(app => {
-                let sCls, sTxt, btns = '';
-                if(app.status === 'pending') { sCls = 'status-pendente'; sTxt = 'Pendente'; btns = `<div style="display:flex; gap:8px; margin-top:16px;"><button class="btn-danger" style="margin:0; flex:1;" onclick="updateAppStatus('${app.id}', 'rejected')">Recusar</button><button class="btn-success" style="margin:0; flex:1;" onclick="updateAppStatus('${app.id}', 'accepted')">Aceitar</button></div>`; } 
-                else if(app.status === 'accepted') { sCls = 'status-aceito'; sTxt = 'Confirmado'; btns = `<button class="btn-primary" style="margin-top:16px;" onclick="updateAppStatus('${app.id}', 'completed')">Concluir</button>`; } 
-                else if(app.status === 'rejected') { sCls = 'status-recusado'; sTxt = 'Recusado'; } 
-                else if(app.status === 'completed') { sCls = 'status-concluido'; sTxt = 'Concluído'; if(app.rating > 0) btns = `<p style="margin-top:12px; font-weight:700; color:var(--star-yellow);">★ Avaliação: ${app.rating}</p>`; }
-                
-                let clientPhoto = "";
-                let clientObj = clientsDB.find(cl => cl.id === app.clientId);
-                if(clientObj && clientObj.photo) {
-                    clientPhoto = `<img src="${clientObj.photo}" style="width:24px; height:24px; border-radius:50%; object-fit:cover; margin-right:8px; vertical-align:middle;">`;
-                }
-
-                c.innerHTML += `<div class="agenda-card"><div class="agenda-header"><span style="font-weight:700; font-size:15px;">${app.date} às ${app.time}</span><span class="agenda-status ${sCls}">${sTxt}</span></div><h4 style="margin-bottom:6px; font-size:16px; display:flex; align-items:center;">${clientPhoto}${app.clientName}</h4><p style="font-size:13px; margin-bottom:12px; color:var(--text-muted);">${app.servicesNames}</p><div style="font-size:15px; font-weight:700; color:var(--business-color);">Total: R$ ${app.total.toFixed(2)}</div>${btns}</div>`;
-            });
-        }
-        function updateAppStatus(id, stat) { const idx = appointmentsDB.findIndex(a => a.id === id); if(idx !== -1) { appointmentsDB[idx].status = stat; localStorage.setItem('db_appointments', JSON.stringify(appointmentsDB)); renderBusinessAgenda(); } }
-        
-        function renderClientAgenda() {
-            const c = document.getElementById('clientAgendaList'); c.innerHTML = '';
-            const appts = appointmentsDB.filter(a => a.clientId === loggedClient.id).reverse();
-            if(appts.length === 0) { c.innerHTML = '<div class="empty-state"><span class="material-icons-outlined">event_busy</span><p>Você não possui histórico.</p></div>'; return; }
-            appts.forEach(app => {
-                let sCls, sTxt, btns = '';
-                if(app.status === 'pending') { sCls = 'status-pendente'; sTxt = 'Aguardando'; } 
-                else if(app.status === 'accepted') { sCls = 'status-aceito'; sTxt = 'Confirmado'; } 
-                else if(app.status === 'rejected') { sCls = 'status-recusado'; sTxt = 'Cancelado'; } 
-                else if(app.status === 'completed') { sCls = 'status-concluido'; sTxt = 'Concluído'; if(!app.rating || app.rating === 0) btns = `<button class="btn-outline" style="margin-top:16px; border-color:var(--star-yellow); color:var(--star-yellow);" onclick="rateAppointment('${app.id}')"><span class="material-icons-outlined">star</span> Avaliar Serviço</button>`; else btns = `<p style="margin-top:12px; font-weight:700; color:var(--star-yellow);">★ Você deu nota ${app.rating}</p>`; }
-                c.innerHTML += `<div class="agenda-card"><div class="agenda-header"><span style="font-weight:700; font-size:15px;">${app.date} às ${app.time}</span><span class="agenda-status ${sCls}">${sTxt}</span></div><h4 style="margin-bottom:6px; font-size:16px;">${app.businessName}</h4><p style="font-size:13px; margin-bottom:12px; color:var(--text-muted);">${app.servicesNames}</p><div style="font-size:15px; font-weight:700; color:var(--primary-blue);">Total: R$ ${app.total.toFixed(2)}</div>${btns}</div>`;
-            });
-        }
-
-        // --- HOME CLIENTE ---
-        function setCategoryFilter(type, el) { currentFilter = type; document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active')); el.classList.add('active'); renderClientHome(); }
-        function renderClientHome() {
-            const c = document.getElementById('dynamicClientList'); c.innerHTML = ''; const term = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = businessDB.filter(bus => { if(!bus.name) return false; return bus.name.toLowerCase().includes(term) && (currentFilter === 'todos' || bus.type === currentFilter); });
-            if(filtered.length === 0) { c.innerHTML = `<div class="empty-state"><span class="material-icons-outlined">search_off</span><p>Nenhum local encontrado.</p></div>`; return; }
-            filtered.forEach(bus => {
-                const bClass = bus.type === 'salao' ? 'salao' : 'barbearia'; const bText = bus.type === 'salao' ? 'Salão' : 'Barbearia';
-                const isOpenHtml = bus.isOpen ? `<span class="status-open"><span class="material-icons-outlined" style="font-size:16px;">check_circle</span> Aberto</span>` : `<span class="status-closed"><span class="material-icons-outlined" style="font-size:16px;">cancel</span> Fechado</span>`;
-                const rating = getBusinessRating(bus.id); const ratingHtml = rating.count > 0 ? `<span style="font-size:13px; font-weight:700; display:flex; align-items:center; gap:4px;"><span class="material-icons-outlined" style="font-size:16px; color:var(--star-yellow);">star</span> ${rating.avg}</span>` : `<span style="font-size:12px; color:var(--text-muted); font-weight: 600;">Novo</span>`;
-                const logoHtml = bus.logo ? `<img src="${bus.logo}" class="business-logo-thumb">` : `<div class="business-logo-thumb" style="display:flex; align-items:center; justify-content:center; color:white; background:var(--primary-blue); font-size:24px; font-weight:bold;">${bus.name.charAt(0).toUpperCase()}</div>`;
-                c.innerHTML += `<div class="list-card" onclick="openProfile('${bus.id}')"><div class="list-card-content"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><div><span class="badge ${bClass}">${bText}</span><h4 style="font-size:17px; font-weight:700; margin-top:8px;">${bus.name}</h4></div>${logoHtml}</div><p style="font-size:13px; color:var(--text-muted); margin: 8px 0 12px 0; line-height: 1.4;">${bus.description || 'Visite nosso perfil e veja nossos serviços.'}</p><div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">${isOpenHtml}${ratingHtml}</div></div></div>`;
-            });
-        }
-
-        // --- PERFIL DA LOJA (VISÃO CLIENTE) ---
-        function openProfile(id) {
-            const bus = businessDB.find(b => b.id === id); if(!bus) return;
-            currentViewedBusinessId = bus.id; selectedServices = []; selectedSlotId = null; updateBookingButton();
-            document.getElementById('viewProfHeaderTitle').innerText = bus.type === 'salao' ? 'Salão' : 'Barbearia';
-            
-            const carousel = document.getElementById('viewProfCarousel'); carousel.innerHTML = '';
-            if(!bus.portfolio || bus.portfolio.length === 0) {
-                const iconName = bus.type === 'salao' ? 'face_retouching_natural' : 'content_cut';
-                carousel.innerHTML = `<div class="portfolio-empty"><span class="material-icons-outlined" style="font-size: 72px;">${iconName}</span></div>`;
-            } else {
-                bus.portfolio.forEach(url => { carousel.innerHTML += `<div class="portfolio-slide"><img src="${url}"></div>`; });
-                if(bus.portfolio.length > 1) carousel.innerHTML += `<div class="swipe-hint">Arraste ➔</div>`;
-            }
-
-            const badge = document.getElementById('viewProfBadge'); badge.className = `badge ${bus.type === 'salao' ? 'salao' : 'barbearia'}`; badge.innerText = bus.type === 'salao' ? 'Salão' : 'Barbearia';
-            document.getElementById('viewProfName').innerText = bus.name; document.getElementById('viewProfDesc').innerText = bus.description || ""; document.getElementById('viewProfPhone').innerText = bus.phone || "Não informado"; document.getElementById('viewProfAddress').innerText = bus.address || "Não informado";
-            document.getElementById('viewProfStatusBox').innerHTML = bus.isOpen ? `<span class="badge" style="background:var(--success-color); color:white; padding: 6px 10px;">Aberto</span>` : `<span class="badge" style="background:var(--danger-color); color:white; padding: 6px 10px;">Fechado</span>`;
-            const rating = getBusinessRating(bus.id); document.getElementById('viewProfRating').innerHTML = rating.count > 0 ? `<span class="material-icons-outlined">star</span> ${rating.avg} <span style="font-weight:500; color:var(--text-muted); font-size:13px; margin-left:4px;">(${rating.count} avaliações)</span>` : `<span style="font-size:13px; font-weight:500; color:var(--text-muted);">Sem avaliações</span>`;
-
-            renderClientSlots(bus);
-            const servContainer = document.getElementById('viewProfServices'); servContainer.innerHTML = '';
-            if(!bus.services || bus.services.length === 0) servContainer.innerHTML = '<p style="color:var(--text-muted); font-size:14px; text-align:center; padding: 20px;">Nenhum serviço cadastrado.</p>';
-            else { bus.services.forEach(s => { const safePrice = parseFloat(s.price) || 0; servContainer.innerHTML += `<div class="service-item" id="serv-${s.id}" onclick="toggleService(${s.id}, '${s.name.replace(/'/g, "\\'")}', ${safePrice})"><div><h4 style="font-size: 16px; font-weight: 600;">${s.name}</h4><div style="font-weight: 700; font-size: 15px; margin-top:6px; color: var(--text-main);">R$ ${safePrice.toFixed(2)}</div></div><span class="material-icons-outlined" id="icon-${s.id}" style="font-size: 28px;">radio_button_unchecked</span></div>`; }); }
-            navigate('perfil', 'client');
-        }
-
-        function renderClientSlots(bus) {
-            const c = document.getElementById('viewProfSlots'); c.innerHTML = '';
-            if(!bus.availableSlots || bus.availableSlots.length === 0) { c.innerHTML = '<p style="font-size: 13px; color: var(--danger-color); padding: 12px 0;">Nenhum horário disponível no momento.</p>'; return; }
-            bus.availableSlots.forEach(s => { const parts = s.date.split('-'); const fDate = `${parts[2]}/${parts[1]}`; c.innerHTML += `<div class="slot-card" id="slot-${s.id}" onclick="selectSlot('${s.id}')"><div class="slot-date">${fDate}</div><div class="slot-time">${s.time}</div></div>`; });
-        }
-
-        function selectSlot(id) {
-            if(selectedSlotId) { const old = document.getElementById(`slot-${selectedSlotId}`); if(old) old.classList.remove('selected'); }
-            if(selectedSlotId === id) selectedSlotId = null; else { selectedSlotId = id; document.getElementById(`slot-${id}`).classList.add('selected'); }
-            updateBookingButton();
-        }
-
-        function toggleService(id, name, price) {
-            const el = document.getElementById(`serv-${id}`); const icon = document.getElementById(`icon-${id}`);
-            const idx = selectedServices.findIndex(s => s.id === id);
-            if (idx > -1) { selectedServices.splice(idx, 1); el.classList.remove('selected'); icon.innerText = "radio_button_unchecked"; } 
-            else { selectedServices.push({ id, name, price }); el.classList.add('selected'); icon.innerText = "check_circle"; }
-            updateBookingButton();
-        }
-
-        function updateBookingButton() {
-            const btn = document.getElementById('btnAgendar'); const bus = businessDB.find(b => b.id === currentViewedBusinessId);
-            if(!bus.isOpen) { btn.innerText = "O local está fechado"; btn.disabled = true; return; }
-            if(!selectedSlotId) { btn.innerText = "Selecione um Horário"; btn.disabled = true; return; }
-            if(selectedServices.length === 0) { btn.innerText = "Selecione Serviços"; btn.disabled = true; return; } 
-            const total = selectedServices.reduce((sum, item) => sum + item.price, 0);
-            btn.innerText = `Agendar Horário (R$ ${total.toFixed(2)})`; btn.disabled = false;
-        }
-
-        function finalizarAgendamento() {
-            const busIndex = businessDB.findIndex(b => b.id === currentViewedBusinessId); if(busIndex === -1) return;
-            const bus = businessDB[busIndex];
-            const slotIndex = bus.availableSlots.findIndex(s => s.id === selectedSlotId); if(slotIndex === -1) return alert("Horário indisponível.");
-            const slot = bus.availableSlots[slotIndex]; const parts = slot.date.split('-'); const fDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
-            
-            bus.availableSlots.splice(slotIndex, 1); localStorage.setItem('db_businesses', JSON.stringify(businessDB));
-            const names = selectedServices.map(s => s.name).join(", "); const total = selectedServices.reduce((sum, item) => sum + item.price, 0);
-            
-            appointmentsDB.push({ id: Date.now().toString(), clientId: loggedClient.id, clientName: loggedClient.name, businessId: bus.id, businessName: bus.name, servicesNames: names, total: total, date: fDate, time: slot.time, status: 'pending', rating: 0 });
-            localStorage.setItem('db_appointments', JSON.stringify(appointmentsDB));
-            alert(`Reserva feita com sucesso!`); navigate('agenda-client', 'client');
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
