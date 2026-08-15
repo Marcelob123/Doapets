@@ -3,341 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DoaPets - App Mobile</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Doapets - App</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="mobile-app-container">
-        
-        <!-- TELA DE ABERTURA ANIMADA -->
-        <div id="splash-screen" class="splash-screen">
-            <div class="paw-animation">🐾</div>
-            <h1 class="splash-title">DoaPets</h1>
-        </div>
 
-        <!-- TELA DE LOGIN E CADASTRO (DESIGN PREMIUM GLASSMORPHISM) -->
-        <div id="auth-section" class="auth-section" style="display: none;">
-            <!-- Fundo animado exclusivo -->
-            <div class="auth-bg-animated"></div>
+    <!-- TELA DE CADASTRO / LOGIN -->
+    <div id="auth-screen">
+        <div class="auth-card">
+            <h1>🐾 Doapets</h1>
+            <p>Faça parte da nossa rede de amor aos animais!</p>
             
-            <div class="glass-auth-card">
-                <div class="auth-header-modern">
-                    <div class="auth-logo-icon">🐶</div>
-                    <h2>DoaPets</h2>
-                    <p>Onde o amor encontra um lar</p>
-                </div>
-
-                <div class="auth-tabs-modern">
-                    <div id="tab-slider" class="tab-slider"></div>
-                    <button id="btn-tab-login" class="auth-tab-mod active" onclick="mostrarLogin()">Entrar</button>
-                    <button id="btn-tab-cadastro" class="auth-tab-mod" onclick="mostrarCadastro()">Nova Conta</button>
-                </div>
-
-                <!-- Formulário de Login -->
-                <div id="form-login-container" class="form-container-mod fade-in">
-                    <form id="form-login">
-                        <div class="input-modern">
-                            <span class="input-icon">✉️</span>
-                            <input type="email" id="loginEmail" placeholder="Seu e-mail" required>
-                        </div>
-                        <div class="input-modern">
-                            <span class="input-icon">🔒</span>
-                            <input type="password" id="loginSenha" placeholder="Sua senha" required>
-                        </div>
-                        <button type="submit" class="btn-auth-modern">Acessar App 🐾</button>
-                    </form>
-                </div>
-
-                <!-- Formulário de Cadastro -->
-                <div id="form-cadastro-container" class="form-container-mod fade-in" style="display: none;">
-                    <form id="form-usuario">
-                        <div class="input-modern">
-                            <span class="input-icon">👤</span>
-                            <input type="text" id="nomeUsuario" placeholder="Nome Completo ou ONG" required>
-                        </div>
-                        <div class="input-modern">
-                            <span class="input-icon">🏷️</span>
-                            <select id="tipoUsuario" required>
-                                <option value="" disabled selected>Qual o seu perfil?</option>
-                                <option value="ong">ONG Protetora</option>
-                                <option value="doador">Pessoa que Resgata/Doa</option>
-                                <option value="adotante">Quero apenas Adotar</option>
-                            </select>
-                        </div>
-                        <div class="input-modern">
-                            <span class="input-icon">✉️</span>
-                            <input type="email" id="cadEmail" placeholder="Seu melhor e-mail" required>
-                        </div>
-                        <div class="input-modern">
-                            <span class="input-icon">🔒</span>
-                            <input type="password" id="cadSenha" placeholder="Crie uma senha segura" required>
-                        </div>
-                        <button type="submit" class="btn-auth-modern">Criar Conta Mágica ✨</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- APLICATIVO PRINCIPAL -->
-        <div id="main-app" class="main-app" style="display: none;">
-            
-            <header class="app-header-premium">
-                <div class="header-logo-text"><span style="color: var(--primary-color);">🐾</span> DoaPets</div>
-                <div class="header-actions-right">
-                    <button class="icon-btn-header" onclick="trocarAba('feed'); document.getElementById('filtro-cidade').focus();">🔍</button>
-                    <div class="header-avatar-container" onclick="trocarAba('perfil')">
-                        <span class="header-avatar-icon">👤</span>
-                        <span class="notification-badge-dot"></span>
-                    </div>
-                </div>
-            </header>
-
-            <main class="app-content">
+            <form id="auth-form" onsubmit="handleAuth(event)">
+                <select id="auth-role" required>
+                    <option value="" disabled selected>Quem é você?</option>
+                    <option value="user">Quero Adotar um Pet</option>
+                    <option value="ong">Sou uma ONG / Protetor</option>
+                </select>
                 
-                <!-- ABA HOME -->
-                <section id="aba-home" class="app-section aba-ativa">
-                    
-                    <div class="premium-hero-card">
-                        <div class="hero-paws">🐾🐾</div>
-                        <div class="hero-brand-title">DoaPets</div>
-                        <div class="hero-dots">
-                            <span class="dot active"></span>
-                            <span class="dot"></span>
-                            <span class="dot"></span>
-                        </div>
-                    </div>
-
-                    <div class="section-title-row">
-                        <h3>Animals available for adoption</h3>
-                        <span class="see-all-link" onclick="trocarAba('feed')">Ver todos &gt;</span>
-                    </div>
-                    <div class="horizontal-scroll-container" id="carrossel-pets">
-                        <!-- Carregado via Javascript dinamicamente -->
-                    </div>
-                    <div class="hero-dots" style="margin-top: 5px; margin-bottom: 20px;">
-                        <span class="dot active"></span>
-                        <span class="dot"></span>
-                        <span class="dot"></span>
-                    </div>
-
-                    <div class="section-title-row">
-                        <h3>Registerde NGOs</h3>
-                        <span class="see-all-link" onclick="trocarAba('parceiros')">Ver todas &gt;</span>
-                    </div>
-                    <div class="map-section-container">
-                        <div class="simulated-map" style="background-image: url('https://maps.googleapis.com/maps/api/staticmap?center=-20.4637,-45.4297&zoom=14&size=400x200&sensor=false&markers=color:red%7C-20.4637,-45.4297');">
-                            <div class="map-pin">📍</div>
-                        </div>
-                    </div>
-
-                </section>
-
-                <!-- FEED ESTILO LINHA DO TEMPO -->
-                <section id="aba-feed" class="app-section" style="display: none;">
-                    <div class="feed-search">
-                        <input type="text" id="filtro-cidade" placeholder="🔍 Buscar por nome do pet ou cidade..." oninput="filtrarFeed()">
-                        <div class="filtro-botoes-especie">
-                            <button class="btn-filtro-especie ativo" onclick="filtrarPorEspecie('', this)">🐾 Todos</button>
-                            <button class="btn-filtro-especie" onclick="filtrarPorEspecie('Cachorro', this)">🐶 Cachorros</button>
-                            <button class="btn-filtro-especie" onclick="filtrarPorEspecie('Gato', this)">🐱 Gatos</button>
-                        </div>
-                    </div>
-                    <div id="lista-pets-feed"></div>
-                </section>
-
-                <!-- PARCEIROS E CUPONS -->
-                <section id="aba-parceiros" class="app-section" style="display: none;">
-                    <h3 style="text-align: center; color: var(--secondary-color); margin-bottom: 15px;">Clube de Vantagens</h3>
-                    <div id="lista-cupons" class="pets-grid"></div>
-                </section>
-
-                <!-- ÁREA DE PERFIL PRIVADO -->
-                <section id="aba-perfil" class="app-section" style="display: none; position: relative;">
-                    <div class="perfil-tabs">
-                        <div id="tab-meus-dados" class="perfil-tab ativo" onclick="alternarAbaPerfil('dados')">Meus Dados</div>
-                        <div id="tab-meus-favoritos" class="perfil-tab" onclick="alternarAbaPerfil('favoritos')">Fotos Favoritas</div>
-                    </div>
-
-                    <div id="conteudo-dados-perfil">
-                        <div class="perfil-card">
-                            <div class="perfil-foto-simulada">👤</div>
-                            <p id="info-perfil-nome"><strong>Nome:</strong> Carregando...</p>
-                            <p id="info-perfil-tipo"><strong>Tipo:</strong> Carregando...</p>
-                            
-                            <div class="perfil-bio-container" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
-                                <p id="info-perfil-bio" style="font-size: 0.95rem; color: #555; text-align: justify; margin-bottom: 10px;"><strong>Sobre:</strong> Nenhuma informação cadastrada.</p>
-                                <div class="perfil-acoes">
-                                    <button class="btn-acao btn-editar" onclick="editarBio()" style="font-size: 0.8rem; padding: 5px 10px;">✏️ Editar Sobre</button>
-                                    <button class="btn-acao btn-excluir" onclick="excluirBio()" style="font-size: 0.8rem; padding: 5px 10px;">🗑️ Limpar</button>
-                                </div>
-                            </div>
-                            
-                            <div class="perfil-acoes" style="margin-top: 20px;">
-                                <button class="btn-acao btn-editar" onclick="editarPerfil()">⚙️ Alterar Nome</button>
-                                <button class="btn-acao btn-excluir" onclick="excluirConta()">Sair da Conta</button>
-                            </div>
-                        </div>
-                        <div class="acoes-extras" style="margin-top: 15px;">
-                            <button class="btn-submit btn-flutuante" onclick="abrirModalPet()">➕ Cadastrar Novo Pet para Doação</button>
-                        </div>
-                    </div>
-
-                    <div id="conteudo-favoritos-perfil" style="display: none;">
-                        <h3 style="text-align: center; color: var(--secondary-color); margin-bottom: 15px;">Meus Pets Salvos</h3>
-                        <div id="lista-favoritos" class="grid-fotos-favoritos"></div>
-                    </div>
-                    
-                    <button class="fab-chat-perfil" onclick="alert('Iniciando central de ajuda DoaPets...')">💬</button>
-                </section>
-            </main>
-
-            <!-- NAVEGAÇÃO INFERIOR -->
-            <nav class="premium-bottom-nav">
-                <a href="#" class="premium-nav-item ativo" onclick="trocarAba('home')">
-                    <span class="p-nav-icon">🏠</span>
-                    <span class="p-nav-text">Home</span>
-                </a>
-                <a href="#" class="premium-nav-item" onclick="trocarAba('feed')">
-                    <span class="p-nav-icon">📋</span>
-                    <span class="p-nav-text">Feeds</span>
-                </a>
+                <input type="text" id="auth-name" placeholder="Seu Nome ou Nome da ONG" required>
+                <input type="tel" id="auth-phone" placeholder="WhatsApp (DDD + Número)" required>
                 
-                <div class="premium-nav-item-center" onclick="abrirModalEscolhaPet()">
-                    <div class="paw-center-btn">🐾</div>
-                </div>
-
-                <a href="#" class="premium-nav-item" onclick="trocarAba('parceiros')">
-                    <span class="p-nav-icon">🔔</span>
-                    <span class="p-nav-text">Percepções</span>
-                </a>
-                <a href="#" class="premium-nav-item" onclick="trocarAba('perfil')">
-                    <span class="p-nav-icon">👤</span>
-                    <span class="p-nav-text">Perfis</span>
-                </a>
-            </nav>
+                <button type="submit" class="btn-primary">Entrar no Aplicativo</button>
+            </form>
         </div>
-
-        <!-- POPUP DA PATINHA -->
-        <div id="modal-escolha-pet" class="modal-overlay" style="display: none;">
-            <div class="modal-content text-center">
-                <span class="close-modal" onclick="fecharModalEscolhaPet()">&times;</span>
-                <h3 style="margin-bottom: 10px; color: var(--secondary-color);">Qual bichinho você quer adotar?</h3>
-                <p style="font-size: 0.9rem; color:#666; margin-bottom: 20px;">Escolha para filtrar os melhores companheiros no seu feed</p>
-                <div style="display: flex; gap: 15px; justify-content: center;">
-                    <button class="btn-submit" style="background:#fff; color:var(--secondary-color); border:2px solid #ddd; font-size: 2.5rem; padding: 10px 20px;" onclick="selecionarRapidoEspecie('Cachorro')">🐶<br><span style="font-size:1rem; font-weight:bold;">Cachorro</span></button>
-                    <button class="btn-submit" style="background:#fff; color:var(--secondary-color); border:2px solid #ddd; font-size: 2.5rem; padding: 10px 20px;" onclick="selecionarRapidoEspecie('Gato')">🐱<br><span style="font-size:1rem; font-weight:bold;">Gato</span></button>
-                </div>
-            </div>
-        </div>
-
-        <!-- MODAL DE CADASTRO PREMIUM -->
-        <div id="modal-cadastro-pet" class="modal-overlay" style="display: none;">
-            <div class="modal-content modal-premium">
-                <span class="close-modal" onclick="fecharModalPet()">&times;</span>
-                
-                <div class="modal-header-premium">
-                    <div class="modal-icon-bg">🐶</div>
-                    <h3>Cadastrar Pet</h3>
-                    <p>Encontre um lar cheio de amor e carinho</p>
-                </div>
-
-                <form id="form-pet" class="form-premium">
-                    <div class="input-group">
-                        <label for="nomePet">Nome do Pet</label>
-                        <input type="text" id="nomePet" placeholder="Ex: Rex, Thor, Mia..." required>
-                    </div>
-                    
-                    <div class="input-row">
-                        <div class="input-group" style="flex: 1;">
-                            <label for="especie">Espécie</label>
-                            <select id="especie" required>
-                                <option value="">Selecione...</option>
-                                <option value="Cachorro">Cachorro</option>
-                                <option value="Gato">Gato</option>
-                            </select>
-                        </div>
-                        <div class="input-group" style="flex: 1;">
-                            <label for="idade">Idade</label>
-                            <input type="text" id="idade" placeholder="Ex: 2 meses" required>
-                        </div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label for="localPet">Sua Cidade - Estado</label>
-                        <input type="text" id="localPet" placeholder="Ex: Formiga - MG" required>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label for="whatsPet">WhatsApp para Contato (Só números)</label>
-                        <input type="tel" id="whatsPet" placeholder="Ex: 37999999999" required>
-                    </div>
-                    
-                    <div class="input-group upload-box-premium">
-                        <label>Foto do Pet</label>
-                        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
-                            <button type="button" id="btn-usar-url" class="btn-filtro-especie ativo" style="flex:1;" onclick="alternarTipoFoto('url')">Link (URL)</button>
-                            <button type="button" id="btn-usar-arquivo" class="btn-filtro-especie" style="flex:1;" onclick="alternarTipoFoto('arquivo')">Galeria</button>
-                        </div>
-                        <input type="url" id="fotoPetUrl" placeholder="Cole o link da imagem aqui" required>
-                        <input type="file" id="fotoPetArquivo" accept="image/*" style="display: none;">
-                        <img id="preview-foto" src="" style="display:none; width:100%; max-height:200px; object-fit:cover; margin-top:10px; border-radius:12px;">
-                    </div>
-
-                    <div class="input-group">
-                        <label for="descricao">História / Descrição</label>
-                        <textarea id="descricao" rows="3" placeholder="Temperamento, vacinas, motivo da doação..." required></textarea>
-                    </div>
-                    
-                    <button type="submit" class="btn-submit">Publicar no Feed</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- MODAL COMENTÁRIOS -->
-        <div id="modal-comentarios" class="modal-overlay" style="display: none;">
-            <div class="modal-content modal-comentarios-conteudo">
-                <span class="close-modal" onclick="fecharComentarios()">&times;</span>
-                <h3 id="titulo-comentarios">Comentários</h3>
-                <div id="lista-comentarios" class="lista-comentarios-area"></div>
-                <form id="form-comentario" class="form-comentario">
-                    <input type="text" id="input-comentario" placeholder="Escreva um comentário..." required>
-                    <button type="submit">Enviar</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- MODAL PERFIL PÚBLICO -->
-        <div id="modal-perfil-publico" class="modal-overlay" style="display: none;">
-            <div class="modal-content text-center">
-                <span class="close-modal" onclick="fecharPerfilPublico()">&times;</span>
-                <div class="perfil-foto-simulada" id="foto-perfil-publico">👤</div>
-                <h3 id="nome-perfil-publico">Nome do Usuário</h3>
-                <p id="tipo-perfil-publico" style="color: #666; margin-bottom: 5px;">Tipo de Perfil</p>
-                <p id="bio-perfil-publico" style="font-size: 0.9rem; color: var(--text-color); margin-bottom: 15px; padding: 10px; background: #f9f9f9; border-radius: 8px;">Sem descrição fornecida.</p>
-            </div>
-        </div>
-
-        <!-- MODAL: CHAT INTERNO -->
-        <div id="modal-chat" class="modal-overlay" style="display: none;">
-            <div class="modal-content modal-comentarios-conteudo" style="background: #e5ddd5;">
-                <span class="close-modal" onclick="fecharChat()">&times;</span>
-                <div style="background: var(--secondary-color); color: white; padding: 10px; border-radius: 10px 10px 0 0; margin: -1.5rem -1.5rem 10px -1.5rem; text-align: center;">
-                    <h3 id="titulo-chat" style="color: white; font-size: 1.1rem; margin:0;">Chat</h3>
-                </div>
-                <div id="historico-chat" class="lista-comentarios-area" style="background: transparent;">
-                    <div class="chat-balao recebido">
-                        <p>Olá! Este é um chat interno de segurança do DoaPets. Quando estiverem prontos para finalizar a adoção, clique no botão abaixo para ir ao WhatsApp.</p>
-                        <span class="chat-hora">Sistema</span>
-                    </div>
-                </div>
-                <div style="text-align: center; margin-top: 10px;">
-                    <button id="btn-ir-whatsapp" class="btn-submit" style="background-color: #25D366; border-radius: 20px;">Continuar no WhatsApp</button>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <script src="script.js"></script>
+    <!-- CABEÇALHO DO APLICATIVO (Apenas Logo) -->
+    <header id="main-header" style="display: none;">
+        <a href="#" class="logo" onclick="switchSection('pets')">🐾 Doapets</a>
+    </header>
+
+    <!-- SEÇÃO 1: VITRINE DE ANIMAIS -->
+    <div id="section-pets" style="display: none;">
+        <section class="hero">
+            <h1>Adote amor!</h1>
+            <p>Centenas de animais estão esperando por você.</p>
+        </section>
+
+        <div class="filters" id="animais">
+            <button class="filter-btn active" onclick="filterPets('todos')">Todos</button>
+            <button class="filter-btn" onclick="filterPets('cachorro')">Cães</button>
+            <button class="filter-btn" onclick="filterPets('gato')">Gatos</button>
+        </div>
+
+        <main class="grid-container" id="pets-grid"></main>
+    </div>
+
+    <!-- SEÇÃO 2: ÁREA DAS ONGS -->
+    <div id="section-ongs" style="display: none;">
+        <section class="hero ngo-hero">
+            <h1>ONGs Parceiras</h1>
+            <p>Conheça os heróis que cuidam dos nossos animais.</p>
+        </section>
+
+        <main class="grid-container" id="ongs-grid"></main>
+    </div>
+
+    <!-- SEÇÃO 3: MEU PERFIL -->
+    <div id="section-profile" style="display: none;">
+        <section class="hero" style="background: linear-gradient(135deg, #feca57 0%, #ff9f43 100%);">
+            <h1 style="color: white;">Olá, <span id="profileUserName">Visitante</span>!</h1>
+            <p style="color: white;">Gerencie seu perfil no aplicativo.</p>
+        </section>
+
+        <div class="form-container" id="ong-profile-area" style="display: none;">
+            <form id="profile-ong-form" onsubmit="updateOngProfile(event)">
+                <h3 style="margin-bottom: 15px;">Dados Públicos da ONG</h3>
+                <input type="text" id="ong-profile-name" readonly style="background-color: #f5f6fa; color: #7f8fa6;">
+                <input type="text" id="ong-profile-location" placeholder="Cidade e Estado (Ex: Formiga, MG)" required>
+                <textarea id="ong-profile-desc" rows="4" placeholder="Qual o foco da sua ONG? Conte um pouco sobre seu trabalho..." required></textarea>
+                <input type="url" id="ong-profile-image" placeholder="Link da Foto de Perfil" required>
+                <button type="submit" class="btn-primary" style="background-color: var(--secondary-color);">Salvar Alterações</button>
+            </form>
+        </div>
+
+        <!-- Botão de sair para celular ficar fácil -->
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="logout()" class="btn-primary" style="background-color: #ff4757; width: 80%; max-width: 300px;">Deslogar do Aplicativo</button>
+        </div>
+    </div>
+
+    <!-- SEÇÃO 4: PAINEL DA ONG (Adicionar Animais) -->
+    <div id="section-panel" style="display: none;">
+        <section class="hero" style="background: linear-gradient(135deg, #f1f2f6 0%, #dfe4ea 100%);">
+            <h1 style="color: #2f3542;">Novo Pet</h1>
+            <p>Adicione um animal na plataforma.</p>
+        </section>
+
+        <div class="form-container">
+            <form id="add-pet-form" onsubmit="addNewPet(event)">
+                <input type="text" id="pet-name" placeholder="Nome do Animal" required>
+                
+                <div class="form-row">
+                    <select id="pet-type" required>
+                        <option value="cachorro">Cachorro</option>
+                        <option value="gato">Gato</option>
+                    </select>
+                    <select id="pet-gender" required>
+                        <option value="Macho">Macho</option>
+                        <option value="Fêmea">Fêmea</option>
+                    </select>
+                </div>
+
+                <input type="text" id="pet-age" placeholder="Idade (ex: 3 meses, 2 anos)" required>
+                <input type="text" id="pet-size" placeholder="Porte (Pequeno, Médio, Grande)" required>
+                
+                <div class="checkbox-group">
+                    <label><input type="checkbox" id="pet-vaccinated"> Vacinado</label>
+                    <label><input type="checkbox" id="pet-castrated"> Castrado</label>
+                </div>
+
+                <textarea id="pet-description" rows="3" placeholder="Comportamento, história e especificações..." required></textarea>
+                <input type="url" id="pet-image" placeholder="URL da Foto do Pet" required>
+                
+                <button type="submit" class="btn-primary">Publicar Pet</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAIS DE APLICATIVO -->
+    <div class="modal" id="adoptModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('adoptModal')">&times;</span>
+            <h2 id="modalTitle">Nome do Pet</h2>
+            <div class="pet-specs" id="modalSpecs"></div>
+            <p style="margin-top: 15px; font-size: 0.9rem; color: #555;">A ONG será notificada do seu interesse.</p>
+            <button class="btn-primary" style="margin-top: 20px;" onclick="confirmAdoption()">Quero Adotar!</button>
+        </div>
+    </div>
+
+    <div class="modal" id="ongDetailModal">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-modal" onclick="closeModal('ongDetailModal')">&times;</span>
+            <img id="ongDetailImage" src="" alt="ONG" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:15px;">
+            <h2 id="ongDetailName" style="color: var(--primary-color);">Nome da ONG</h2>
+            <p class="ong-rating" id="ongDetailRating"></p>
+            <p class="ong-location" id="ongDetailLocation" style="margin-bottom: 15px;"></p>
+            <div class="pet-specs" style="text-align: left;">
+                <p id="ongDetailDesc" style="border: none; margin: 0;"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MENU INFERIOR DE APLICATIVO FIXO -->
+    <nav class="mobile-nav" id="mobile-nav-bar" style="display: none;">
+        <a href="#" onclick="switchSection('pets')" id="mob-nav-pets" class="active">🐾<br>Início</a>
+        <a href="#" onclick="switchSection('ongs')" id="mob-nav-ongs">🏥<br>ONGs</a>
+        <a href="#" onclick="switchSection('panel')" id="mob-nav-panel" style="display: none;">➕<br>Novo Pet</a>
+        <a href="#" onclick="openMyProfile()" id="mob-nav-profile">👤<br>Perfil</a>
+    </nav>
+
+    <script src="js/script.js"></script>
 </body>
 </html>
