@@ -1,7 +1,7 @@
 :root {
   --primary: #ff6b6b;
   --primary-dark: #e85050;
-  --secondary: #4ecdc4;
+  --secondary: #20bf6b;
   --bg: #f8f9fa;
   --card-bg: #ffffff;
   --text: #2d3436;
@@ -9,6 +9,7 @@
   --border: #edf2f7;
   --danger: #e74c3c;
   --radius: 16px;
+  --nav-height: 64px;
 }
 
 * {
@@ -216,7 +217,7 @@ body {
 }
 
 .btn-primary:active {
-  background: var(--primary-dark);
+  filter: brightness(0.95);
 }
 
 .btn-secondary {
@@ -227,19 +228,21 @@ body {
   cursor: pointer;
 }
 
-/* Aplicativo com Abas */
+/* Aplicativo com Abas e Barra Fixa */
 .main-app {
   display: flex;
   flex-direction: column;
   height: 100%;
   position: relative;
+  overflow: hidden;
 }
 
 .tab-content {
   display: none;
   flex: 1;
-  padding: 20px 20px 70px 20px;
+  padding: 20px 20px calc(var(--nav-height) + 20px) 20px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tab-content.active {
@@ -269,6 +272,134 @@ body {
   margin-bottom: 16px;
 }
 
+.section-title-wrap {
+  margin: 16px 0 10px 0;
+}
+
+.section-title-wrap h3 {
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+/* Listas Suspensas / Accordion */
+.feed-accordion-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.accordion-item {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.accordion-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #fff;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.accordion-icon {
+  font-size: 0.75rem;
+  transition: transform 0.3s ease;
+  color: var(--text-muted);
+}
+
+.accordion-item.active .accordion-icon {
+  transform: rotate(180deg);
+}
+
+.accordion-body {
+  display: none;
+  padding: 0 16px 16px 16px;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.accordion-item.active .accordion-body {
+  display: flex;
+}
+
+.ong-info-card {
+  background: var(--bg);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.ong-info-card h4 {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.ong-info-card p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+/* Lista de Notícias dentro do Dropdown */
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.news-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.news-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.news-author {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.news-tag {
+  font-size: 0.7rem;
+  background: #eafaf1;
+  color: var(--secondary);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.news-card h4 {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.news-card p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+/* Adoção / Card */
 .pet-card {
   background: white;
   padding: 16px;
@@ -291,7 +422,7 @@ body {
   width: 100%;
   margin-top: 12px;
   padding: 10px;
-  background: var(--secondary);
+  background: var(--primary);
   border: none;
   border-radius: 8px;
   color: white;
@@ -304,19 +435,20 @@ body {
   cursor: not-allowed;
 }
 
-/* Barra de Navegação Inferior */
+/* Barra Inferior */
 .bottom-nav {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 60px;
+  height: var(--nav-height);
   background: #ffffff;
   border-top: 1px solid var(--border);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  z-index: 10;
+  z-index: 50;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
 }
 
 .nav-btn {
@@ -328,10 +460,12 @@ body {
   gap: 2px;
   color: var(--text-muted);
   cursor: pointer;
+  width: 33.33%;
+  padding: 8px 0;
 }
 
 .nav-btn .nav-icon {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
 }
 
 .nav-btn .nav-label {
@@ -343,7 +477,7 @@ body {
   color: var(--primary);
 }
 
-/* Estilos da Aba de Perfil */
+/* Perfil */
 .profile-scroll {
   display: flex;
   flex-direction: column;
@@ -404,7 +538,6 @@ body {
   margin-bottom: 10px;
 }
 
-/* Botão de Denúncia */
 .btn-report {
   width: 100%;
   display: flex;
@@ -433,7 +566,6 @@ body {
   font-size: 0.75rem;
 }
 
-/* Lista de Configurações */
 .settings-list {
   background: white;
   border-radius: var(--radius);
@@ -465,7 +597,7 @@ body {
   font-size: 1.2rem;
 }
 
-/* Pop-up Modal */
+/* Modais */
 .modal-backdrop {
   display: none;
   position: absolute;
