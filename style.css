@@ -9,7 +9,7 @@
   --border: #edf2f7;
   --danger: #e74c3c;
   --radius: 16px;
-  --nav-height: 64px;
+  --nav-height: 65px;
 }
 
 * {
@@ -20,12 +20,17 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Evita que a página inteira role para fora da tela */
+}
+
 body {
   background: #1a1a1a;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
 }
 
 /* Moldura Mobile */
@@ -33,6 +38,7 @@ body {
   width: 100%;
   max-width: 414px;
   height: 100vh;
+  height: 100dvh; /* Adapta à barra dinâmica de navegadores mobile */
   max-height: 896px;
   background: var(--bg);
   position: relative;
@@ -44,7 +50,7 @@ body {
 
 @media (max-width: 480px) {
   .app-container {
-    max-height: 100vh;
+    max-height: 100dvh;
     border-radius: 0;
   }
 }
@@ -228,11 +234,12 @@ body {
   cursor: pointer;
 }
 
-/* Aplicativo com Abas e Barra Fixa */
+/* Estrutura do App: Painel Superior com Rolagem e Barra Base 100% Fixa */
 .main-app {
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 100%;
   position: relative;
   overflow: hidden;
 }
@@ -240,7 +247,7 @@ body {
 .tab-content {
   display: none;
   flex: 1;
-  padding: 20px 20px calc(var(--nav-height) + 20px) 20px;
+  padding: 20px 20px 24px 20px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -294,7 +301,6 @@ body {
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
-  transition: border-color 0.2s;
 }
 
 .accordion-header {
@@ -351,7 +357,7 @@ body {
   line-height: 1.35;
 }
 
-/* Lista de Notícias dentro do Dropdown */
+/* Notícias */
 .news-list {
   display: flex;
   flex-direction: column;
@@ -399,7 +405,7 @@ body {
   line-height: 1.35;
 }
 
-/* Adoção / Card */
+/* Cards de Adoção */
 .pet-card {
   background: white;
   padding: 16px;
@@ -435,20 +441,17 @@ body {
   cursor: not-allowed;
 }
 
-/* Barra Inferior */
+/* BARRA FIXA NA BASE (Flex-child travado) */
 .bottom-nav {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  flex-shrink: 0; /* Impede a barra de ser encolhida ou esmagada */
   height: var(--nav-height);
   background: #ffffff;
   border-top: 1px solid var(--border);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  z-index: 50;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+  z-index: 100;
+  box-shadow: 0 -3px 12px rgba(0,0,0,0.05);
 }
 
 .nav-btn {
@@ -461,7 +464,8 @@ body {
   color: var(--text-muted);
   cursor: pointer;
   width: 33.33%;
-  padding: 8px 0;
+  height: 100%;
+  justify-content: center;
 }
 
 .nav-btn .nav-icon {
@@ -606,7 +610,7 @@ body {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.6);
-  z-index: 100;
+  z-index: 200;
   align-items: center;
   justify-content: center;
   padding: 16px;
