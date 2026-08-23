@@ -37,29 +37,37 @@
       </div>
     </section>
 
-    <!-- Tela 2: Formulário dinâmico -->
+    <!-- Tela 2: Autenticação (Cadastro ou Login) -->
     <section id="screen-form" class="screen">
       <button type="button" id="btn-back-profile" class="btn-icon">← Voltar</button>
       
+      <!-- Alternador de Abas Cadastro / Login -->
+      <div class="auth-toggle">
+        <button type="button" id="btn-toggle-signup" class="auth-toggle-btn active">Criar Conta</button>
+        <button type="button" id="btn-toggle-login" class="auth-toggle-btn">Fazer Login</button>
+      </div>
+
       <div class="form-header">
         <h2 id="form-title">Criar Conta</h2>
         <p id="form-subtitle">Preencha seus dados de acesso</p>
       </div>
 
       <form id="auth-form">
-        <div class="input-group">
+        <!-- Campos exclusivos de cadastro -->
+        <div class="input-group signup-field">
           <label for="name" id="label-name">Nome Completo</label>
-          <input type="text" id="name" required placeholder="Seu nome">
+          <input type="text" id="name" placeholder="Seu nome">
         </div>
 
+        <div class="input-group signup-field">
+          <label for="doc" id="label-doc">CPF</label>
+          <input type="text" id="doc" placeholder="000.000.000-00">
+        </div>
+
+        <!-- Campos comuns -->
         <div class="input-group">
           <label for="email">E-mail</label>
           <input type="email" id="email" required placeholder="seu@email.com">
-        </div>
-
-        <div class="input-group">
-          <label for="doc" id="label-doc">CPF</label>
-          <input type="text" id="doc" required placeholder="000.000.000-00">
         </div>
 
         <div class="input-group">
@@ -67,14 +75,14 @@
           <input type="password" id="password" required placeholder="••••••••">
         </div>
 
-        <button type="submit" class="btn-primary">Criar Conta</button>
+        <button type="submit" id="btn-submit-auth" class="btn-primary">Criar Conta</button>
       </form>
     </section>
 
     <!-- Área Autenticada com Abas -->
     <div id="main-app" class="main-app" style="display: none;">
       
-      <!-- Aba 1: Início / Adoção -->
+      <!-- Aba 1: Início / Adoção com Busca e Classificações -->
       <section id="tab-home" class="tab-content active">
         <header class="home-header">
           <h2>Doapets Início</h2>
@@ -90,21 +98,32 @@
             ⚠️ Modo somente leitura. Visitantes não podem interagir ou registrar denúncias.
           </div>
 
+          <!-- Barra de Pesquisa -->
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="input-search-pets" placeholder="Pesquisar por nome, raça, porte...">
+          </div>
+
+          <!-- Classificações / Categorias dos Animais -->
+          <div class="categories-bar">
+            <button type="button" class="category-chip active" data-category="all">🐾 Todos</button>
+            <button type="button" class="category-chip" data-category="cao">🐶 Cachorros</button>
+            <button type="button" class="category-chip" data-category="gato">🐱 Gatos</button>
+            <button type="button" class="category-chip" data-category="filhote">🍼 Filhotes</button>
+            <button type="button" class="category-chip" data-category="outros">🐰 Outros</button>
+          </div>
+
           <div class="section-title-wrap">
             <h3>🐾 Amigos para Adoção</h3>
           </div>
-          <div class="sample-feed">
-            <div class="pet-card">
-              <div class="pet-placeholder">🐶 Imagem do Pet</div>
-              <h3>Pipoca (2 anos)</h3>
-              <p>Porte médio, vacinado e castrado.</p>
-              <button class="btn-action">Quero Adotar</button>
-            </div>
+          
+          <div id="pets-feed-list" class="sample-feed">
+            <!-- Renderizado dinamicamente via JS -->
           </div>
         </div>
       </section>
 
-      <!-- Aba 2: Feed Exclusivo de Notícias e ONGs (com listas suspensas) -->
+      <!-- Aba 2: Feed Exclusivo de Notícias e ONGs -->
       <section id="tab-feed" class="tab-content">
         <header class="home-header">
           <h2>Feed & Informações</h2>
@@ -129,10 +148,13 @@
             </div>
           </div>
 
-          <!-- Dropdown 2: Novas Informações Atuais / Notícias -->
+          <!-- Dropdown 2: Novas Informações Atuais com Badge Arredondado no Lado Esquerdo -->
           <div class="accordion-item active">
             <button type="button" class="accordion-header">
-              <span>📢 Novas Informações Atuais & Notícias</span>
+              <span class="accordion-title-wrap">
+                <span id="badge-news-count" class="badge-count-left">0</span>
+                📢 Novas Informações Atuais & Notícias
+              </span>
               <span class="accordion-icon">▼</span>
             </button>
             <div class="accordion-body">
@@ -165,7 +187,7 @@
           <div id="ong-admin-panel" class="profile-section" style="display: none;">
             <h4>Painel da ONG</h4>
             <button type="button" id="btn-open-news-modal" class="btn-primary" style="margin-top: 0; background: var(--secondary);">
-              ✍️ Publicar Notícia / Informativo no Feed
+              ✍️ Publicar Notícia / Evento no Feed
             </button>
           </div>
 
@@ -199,14 +221,15 @@
         </div>
       </section>
 
-      <!-- Barra de Navegação Inferior Fixa (3 Abas) -->
+      <!-- Barra de Navegação Inferior Fixa -->
       <nav class="bottom-nav">
         <button type="button" class="nav-btn active" data-tab="tab-home">
           <span class="nav-icon">🐾</span>
           <span class="nav-label">Início</span>
         </button>
-        <button type="button" class="nav-btn" data-tab="tab-feed">
+        <button type="button" class="nav-btn nav-btn-relative" data-tab="tab-feed">
           <span class="nav-icon">📰</span>
+          <span id="nav-badge-news" class="nav-badge">0</span>
           <span class="nav-label">Feed</span>
         </button>
         <button type="button" class="nav-btn" data-tab="tab-profile">
@@ -216,28 +239,43 @@
       </nav>
     </div>
 
-    <!-- Modais -->
+    <!-- Modal: Publicar / Editar Notícia com Data (ONG) -->
     <div id="modal-news" class="modal-backdrop">
       <div class="modal-box">
         <div class="modal-header">
-          <h3 style="color: var(--secondary);">✍️ Nova Publicação da ONG</h3>
+          <h3 id="modal-news-title-header" style="color: var(--secondary);">✍️ Nova Publicação da ONG</h3>
           <button type="button" id="btn-close-news" class="modal-close">&times;</button>
         </div>
         
         <form id="form-news" class="modal-body">
+          <input type="hidden" id="news-edit-id">
+          
           <div class="input-group">
-            <label>Título da Notícia / Campanha:</label>
-            <input type="text" id="news-title" required placeholder="Ex: Feira de Adoção no Sábado!">
+            <label>Título da Notícia / Evento:</label>
+            <input type="text" id="news-title" required placeholder="Ex: Feira de Adoção ou Informativo">
           </div>
 
           <div class="input-group">
             <label>Categoria:</label>
             <select id="news-category" required>
               <option value="Campanha">Campanha de Adoção</option>
-              <option value="Urgente">Pedido de Ajuda / Ração</option>
               <option value="Evento">Evento / Castração</option>
+              <option value="Urgente">Pedido de Ajuda / Ração</option>
               <option value="Informativo">Informativo Geral</option>
             </select>
+          </div>
+
+          <div class="input-group">
+            <label>Tipo de Data:</label>
+            <select id="news-date-type" required>
+              <option value="Publicado em">Data da Publicação</option>
+              <option value="Evento agendado para">Data do Evento</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Data Escolhida:</label>
+            <input type="date" id="news-date" required>
           </div>
 
           <div class="input-group">
@@ -245,11 +283,30 @@
             <textarea id="news-content" rows="4" required placeholder="Conte os detalhes da novidade ou evento..."></textarea>
           </div>
 
-          <button type="submit" class="btn-primary" style="background: var(--secondary);">Postar no Feed</button>
+          <button type="submit" id="btn-save-news" class="btn-primary" style="background: var(--secondary);">Postar no Feed</button>
         </form>
       </div>
     </div>
 
+    <!-- Modal Pop-up: Calendário Suspenso do Post -->
+    <div id="modal-calendar" class="modal-backdrop">
+      <div class="modal-box calendar-modal-box">
+        <div class="modal-header">
+          <h3 style="color: var(--primary);">📅 Calendário</h3>
+          <button type="button" id="btn-close-calendar" class="modal-close">&times;</button>
+        </div>
+        <div class="calendar-content">
+          <div id="calendar-month-year" class="calendar-header-title"></div>
+          <div class="calendar-grid-header">
+            <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+          </div>
+          <div id="calendar-days" class="calendar-grid-days"></div>
+          <p id="calendar-footer-text" class="calendar-footer-note"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Canal de Denúncia -->
     <div id="modal-report" class="modal-backdrop">
       <div class="modal-box">
         <div class="modal-header">
