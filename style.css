@@ -373,6 +373,172 @@ body {
   color: var(--text);
 }
 
+/* Lista Horizontal de Pets com Imagem Redonda */
+.pets-horizontal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pet-row-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #ffffff;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s;
+}
+
+.pet-row-card:active {
+  transform: scale(0.98);
+  border-color: var(--primary);
+}
+
+/* Imagem Redonda do Animal */
+.pet-circle-avatar {
+  width: 68px;
+  height: 68px;
+  min-width: 68px;
+  border-radius: 50%;
+  background: #ffe3e3;
+  border: 2.5px solid var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  overflow: hidden;
+}
+
+.pet-row-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pet-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pet-row-header h3 {
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.pet-category-tag {
+  font-size: 0.7rem;
+  background: #f1f2f6;
+  color: var(--text-muted);
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.pet-row-meta {
+  font-size: 0.78rem;
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+.pet-row-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pet-row-arrow {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  padding-left: 4px;
+}
+
+/* Modal de Detalhes Completos do Pet */
+.pet-details-modal-box {
+  text-align: center;
+}
+
+.pet-modal-circle-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 14px;
+}
+
+.pet-circle-lg {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: #ffe3e3;
+  border: 4px solid var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.25);
+}
+
+.pet-modal-title-main {
+  font-size: 1.35rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.pet-specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.spec-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.spec-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.spec-item strong {
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.pet-modal-desc-box {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.pet-modal-desc-box h4 {
+  font-size: 0.85rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.pet-modal-desc-box p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
 /* Accordion */
 .feed-accordion-wrap {
   display: flex;
@@ -409,7 +575,6 @@ body {
   gap: 8px;
 }
 
-/* Badge Arredondado no Lado Esquerdo */
 .badge-count-left {
   display: inline-flex;
   align-items: center;
@@ -508,7 +673,6 @@ body {
   align-self: flex-start;
 }
 
-/* Quadradinho de Data */
 .date-badge-btn {
   display: flex;
   flex-direction: column;
@@ -568,7 +732,6 @@ body {
   margin-bottom: 8px;
 }
 
-/* Ações de Edição e Exclusão */
 .news-actions {
   display: flex;
   gap: 8px;
@@ -600,7 +763,7 @@ body {
   background: #fff5f5;
 }
 
-/* Modal do Calendário */
+/* Modal Calendário */
 .calendar-modal-box {
   max-width: 320px;
   text-align: center;
@@ -653,65 +816,6 @@ body {
   margin-top: 14px;
   font-size: 0.8rem;
   color: var(--text-muted);
-}
-
-/* Feed e Cards de Adoção */
-.sample-feed {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.pet-card {
-  background: white;
-  padding: 16px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-}
-
-.pet-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 8px;
-}
-
-.pet-category-tag {
-  font-size: 0.75rem;
-  background: #f1f2f6;
-  color: var(--text-muted);
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-weight: 600;
-}
-
-.pet-placeholder {
-  height: 140px;
-  background: #eee;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-muted);
-  margin-bottom: 12px;
-  font-size: 1.5rem;
-}
-
-.btn-action {
-  width: 100%;
-  margin-top: 12px;
-  padding: 10px;
-  background: var(--primary);
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.btn-action.disabled {
-  background: #ccc;
-  cursor: not-allowed;
 }
 
 /* Barra Fixa e Badges */
