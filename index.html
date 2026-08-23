@@ -41,7 +41,6 @@
     <section id="screen-form" class="screen">
       <button type="button" id="btn-back-profile" class="btn-icon">← Voltar</button>
       
-      <!-- Alternador de Abas Cadastro / Login -->
       <div class="auth-toggle">
         <button type="button" id="btn-toggle-signup" class="auth-toggle-btn active">Criar Conta</button>
         <button type="button" id="btn-toggle-login" class="auth-toggle-btn">Fazer Login</button>
@@ -53,7 +52,6 @@
       </div>
 
       <form id="auth-form">
-        <!-- Campos exclusivos de cadastro -->
         <div class="input-group signup-field">
           <label for="name" id="label-name">Nome Completo</label>
           <input type="text" id="name" placeholder="Seu nome">
@@ -64,7 +62,6 @@
           <input type="text" id="doc" placeholder="000.000.000-00">
         </div>
 
-        <!-- Campos comuns -->
         <div class="input-group">
           <label for="email">E-mail</label>
           <input type="email" id="email" required placeholder="seu@email.com">
@@ -82,7 +79,7 @@
     <!-- Área Autenticada com Abas -->
     <div id="main-app" class="main-app" style="display: none;">
       
-      <!-- Aba 1: Início / Adoção com Busca e Classificações -->
+      <!-- Aba 1: Início / Adoção -->
       <section id="tab-home" class="tab-content active">
         <header class="home-header">
           <h2>Doapets Início</h2>
@@ -104,7 +101,7 @@
             <input type="text" id="input-search-pets" placeholder="Pesquisar por nome, raça, porte...">
           </div>
 
-          <!-- Classificações / Categorias dos Animais -->
+          <!-- Classificações / Categorias -->
           <div class="categories-bar">
             <button type="button" class="category-chip active" data-category="all">🐾 Todos</button>
             <button type="button" class="category-chip" data-category="cao">🐶 Cachorros</button>
@@ -117,8 +114,9 @@
             <h3>🐾 Amigos para Adoção</h3>
           </div>
           
-          <div id="pets-feed-list" class="sample-feed">
-            <!-- Renderizado dinamicamente via JS -->
+          <!-- Lista de Pets com imagem redonda -->
+          <div id="pets-feed-list" class="pets-horizontal-list">
+            <!-- Renderizado via script.js -->
           </div>
         </div>
       </section>
@@ -130,7 +128,6 @@
         </header>
 
         <div class="feed-accordion-wrap">
-          <!-- Dropdown 1: Informações sobre ONGs -->
           <div class="accordion-item">
             <button type="button" class="accordion-header">
               <span>🏠 Informações sobre as ONGs</span>
@@ -148,7 +145,6 @@
             </div>
           </div>
 
-          <!-- Dropdown 2: Novas Informações Atuais com Badge Arredondado no Lado Esquerdo -->
           <div class="accordion-item active">
             <button type="button" class="accordion-header">
               <span class="accordion-title-wrap">
@@ -183,7 +179,6 @@
             <p id="profile-email" class="profile-subtitle">usuario@email.com</p>
           </div>
 
-          <!-- Painel Exclusivo para ONG -->
           <div id="ong-admin-panel" class="profile-section" style="display: none;">
             <h4>Painel da ONG</h4>
             <button type="button" id="btn-open-news-modal" class="btn-primary" style="margin-top: 0; background: var(--secondary);">
@@ -239,6 +234,51 @@
       </nav>
     </div>
 
+    <!-- Modal Pop-up: Detalhes Completos do Animal -->
+    <div id="modal-pet-details" class="modal-backdrop">
+      <div class="modal-box pet-details-modal-box">
+        <div class="modal-header">
+          <h3 id="pet-modal-title" style="color: var(--primary);">🐾 Detalhes do Pet</h3>
+          <button type="button" id="btn-close-pet-modal" class="modal-close">&times;</button>
+        </div>
+        
+        <div class="pet-details-content">
+          <div class="pet-modal-circle-wrapper">
+            <div id="pet-modal-avatar" class="pet-circle-lg">🐶</div>
+          </div>
+          
+          <h2 id="pet-modal-name" class="pet-modal-title-main">Nome do Pet</h2>
+          <span id="pet-modal-tag" class="pet-category-tag">Categoria</span>
+
+          <div class="pet-specs-grid">
+            <div class="spec-item">
+              <span class="spec-label">Idade</span>
+              <strong id="pet-modal-age">2 anos</strong>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Porte</span>
+              <strong id="pet-modal-size">Médio</strong>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Saúde</span>
+              <strong id="pet-modal-health">Castrado & Vacinado</strong>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Local</span>
+              <strong id="pet-modal-location">Formiga - MG</strong>
+            </div>
+          </div>
+
+          <div class="pet-modal-desc-box">
+            <h4>História e Personalidade:</h4>
+            <p id="pet-modal-description">Descrição detalhada do animal.</p>
+          </div>
+
+          <button type="button" id="btn-modal-adopt" class="btn-primary">Quero Adotar Este Pet ❤️</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal: Publicar / Editar Notícia com Data (ONG) -->
     <div id="modal-news" class="modal-backdrop">
       <div class="modal-box">
@@ -288,7 +328,7 @@
       </div>
     </div>
 
-    <!-- Modal Pop-up: Calendário Suspenso do Post -->
+    <!-- Modal Pop-up: Calendário Suspenso -->
     <div id="modal-calendar" class="modal-backdrop">
       <div class="modal-box calendar-modal-box">
         <div class="modal-header">
