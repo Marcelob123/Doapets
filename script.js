@@ -1,7 +1,23 @@
-// Estado da sessão
+// Estado da sessão e repositório local de notícias
 const appState = {
   currentRole: null, // 'ong' | 'user' | 'guest'
-  userProfile: null
+  userProfile: null,
+  news: [
+    {
+      id: 1,
+      author: "ONG Patas do Bem",
+      category: "Campanha",
+      title: "Grande Feira de Adoção neste Sábado!",
+      content: "Venha conhecer nossos resgatados na Praça Central das 09h às 16h. Traga documentos para adotar."
+    },
+    {
+      id: 2,
+      author: "Instituto Amigo Fiel",
+      category: "Urgente",
+      title: "Campanha de Arrecadação de Ração",
+      content: "Nosso estoque de ração para cães adultos está quase no fim. Qualquer doação é bem-vinda!"
+    }
+  ]
 };
 
 // Telas principais
@@ -16,25 +32,64 @@ const labelName = document.getElementById('label-name');
 const labelDoc = document.getElementById('label-doc');
 const inputDoc = document.getElementById('doc');
 
-// Elementos da Home & Perfil
+// Elementos da Home, Feed & Perfil
 const loggedUserType = document.getElementById('logged-user-type');
 const guestAlert = document.getElementById('guest-alert');
 const btnAction = document.querySelector('.btn-action');
 const profileName = document.getElementById('profile-name');
 const profileEmail = document.getElementById('profile-email');
+const ongAdminPanel = document.getElementById('ong-admin-panel');
+const ongNewsList = document.getElementById('ong-news-list');
 
 // Avatar
 const avatarContainer = document.getElementById('avatar-container');
 const avatarInput = document.getElementById('avatar-input');
 const avatarPreview = document.getElementById('avatar-preview');
 
-// Modal de Denúncia
+// Modais
 const btnOpenReport = document.getElementById('btn-open-report');
 const btnCloseReport = document.getElementById('btn-close-report');
 const modalReport = document.getElementById('modal-report');
 const formReport = document.getElementById('form-report');
 
-// Navegação entre telas de entrada vs App principal
+const btnOpenNewsModal = document.getElementById('btn-open-news-modal');
+const btnCloseNews = document.getElementById('btn-close-news');
+const modalNews = document.getElementById('modal-news');
+const formNews = document.getElementById('form-news');
+
+// Renderizar notícias na lista suspensa do Feed
+function renderNewsFeed() {
+  ongNewsList.innerHTML = '';
+  
+  if (appState.news.length === 0) {
+    ongNewsList.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">Nenhuma notícia publicada ainda.</p>';
+    return;
+  }
+
+  appState.news.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'news-card';
+    card.innerHTML = `
+      <div class="news-card-header">
+        <span class="news-author">🏠 ${item.author}</span>
+        <span class="news-tag">${item.category}</span>
+      </div>
+      <h4>${item.title}</h4>
+      <p>${item.content}</p>
+    `;
+    ongNewsList.appendChild(card);
+  });
+}
+
+// Alternância das Listas Suspensas (Accordion)
+document.querySelectorAll('.accordion-header').forEach(header => {
+  header.addEventListener('click', () => {
+    const parentItem = header.parentElement;
+    parentItem.classList.toggle('active');
+  });
+});
+
+// Navegação entre telas de autenticação e app principal
 function showScreen(screenType) {
   screenProfile.classList.remove('active');
   screenForm.classList.remove('active');
@@ -71,14 +126,15 @@ function setupForm(role) {
 // Entrar no aplicativo principal
 function enterHome(profileData) {
   appState.userProfile = profileData;
+  renderNewsFeed();
   
   if (appState.currentRole === 'guest') {
     loggedUserType.textContent = 'Visitante (Leitura)';
     guestAlert.style.display = 'block';
     profileName.textContent = 'Visitante';
     profileEmail.textContent = 'Sem conta conectada';
+    ongAdminPanel.style.display = 'none';
     
-    // Bloqueia ações de interação para visitante
     btnAction.classList.add('disabled');
     btnAction.onclick = () => alert('Visitantes não podem realizar interações.');
   } else {
@@ -88,16 +144,22 @@ function enterHome(profileData) {
     profileEmail.textContent = profileData.email || 'Sem e-mail cadastrado';
     guestAlert.style.display = 'none';
     
+    // Painel de postagem visível apenas para perfil ONG
+    if (appState.currentRole === 'ong') {
+      ongAdminPanel.style.display = 'block';
+    } else {
+      ongAdminPanel.style.display = 'none';
+    }
+
     btnAction.classList.remove('disabled');
     btnAction.onclick = () => alert('Ação iniciada com sucesso!');
   }
 
-  // Define a primeira aba como Feed por padrão
-  switchTab('tab-feed');
+  switchTab('tab-home');
   showScreen('app');
 }
 
-// Alternar abas inferiores (Feed / Perfil)
+// Alternar entre as 3 abas inferiores (Início / Feed / Perfil)
 function switchTab(tabId) {
   document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -109,7 +171,7 @@ function switchTab(tabId) {
   if (targetBtn) targetBtn.classList.add('active');
 }
 
-// Upload de foto do perfil (arredondada)
+// Upload de foto de perfil
 avatarContainer.addEventListener('click', () => {
   if (appState.currentRole === 'guest') {
     alert('Visitantes não podem alterar foto de perfil.');
@@ -127,6 +189,37 @@ avatarInput.addEventListener('change', (e) => {
     };
     reader.readAsDataURL(file);
   }
+});
+
+// Modal de Publicação (ONG)
+btnOpenNewsModal.addEventListener('click', () => {
+  modalNews.classList.add('active');
+});
+
+btnCloseNews.addEventListener('click', () => {
+  modalNews.classList.remove('active');
+});
+
+formNews.addEventListener('submit', (e) => {
+  e.preventDefault();
+  
+  const newPost = {
+    id: Date.now(),
+    author: appState.userProfile.name,
+    category: document.getElementById('news-category').value,
+    title: document.getElementById('news-title').value,
+    content: document.getElementById('news-content').value
+  };
+
+  appState.news.unshift(newPost);
+  renderNewsFeed();
+  
+  formNews.reset();
+  modalNews.classList.remove('active');
+  alert('📢 Publicado com sucesso no Feed!');
+  
+  // Leva o usuário diretamente para a aba Feed para ver a publicação
+  switchTab('tab-feed');
 });
 
 // Modal de Denúncia
