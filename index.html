@@ -71,12 +71,13 @@
       </form>
     </section>
 
-    <!-- Área Autenticada (com abas de navegação) -->
+    <!-- Área Autenticada com Abas -->
     <div id="main-app" class="main-app" style="display: none;">
-      <!-- Aba: Feed / Início -->
-      <section id="tab-feed" class="tab-content active">
+      
+      <!-- Aba 1: Início / Adoção -->
+      <section id="tab-home" class="tab-content active">
         <header class="home-header">
-          <h2>Doapets Feed</h2>
+          <h2>Doapets Início</h2>
           <button id="btn-logout" class="btn-secondary">Sair</button>
         </header>
 
@@ -89,6 +90,9 @@
             ⚠️ Modo somente leitura. Visitantes não podem interagir ou registrar denúncias.
           </div>
 
+          <div class="section-title-wrap">
+            <h3>🐾 Amigos para Adoção</h3>
+          </div>
           <div class="sample-feed">
             <div class="pet-card">
               <div class="pet-placeholder">🐶 Imagem do Pet</div>
@@ -100,14 +104,53 @@
         </div>
       </section>
 
-      <!-- Aba: Perfil -->
+      <!-- Aba 2: Feed Exclusivo de Notícias e ONGs (com listas suspensas) -->
+      <section id="tab-feed" class="tab-content">
+        <header class="home-header">
+          <h2>Feed & Informações</h2>
+        </header>
+
+        <div class="feed-accordion-wrap">
+          <!-- Dropdown 1: Informações sobre ONGs -->
+          <div class="accordion-item">
+            <button type="button" class="accordion-header">
+              <span>🏠 Informações sobre as ONGs</span>
+              <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-body">
+              <div class="ong-info-card">
+                <h4>Como atuam as ONGs parceiras</h4>
+                <p>Nossas instituições cadastradas realizam resgates, tratamento veterinário, castração e encaminhamento seguro para adoção responsável.</p>
+              </div>
+              <div class="ong-info-card">
+                <h4>Como ajudar uma ONG</h4>
+                <p>Você pode doar ração, medicamentos, apadrinhar um pet ou oferecer lar temporário.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dropdown 2: Novas Informações Atuais / Notícias -->
+          <div class="accordion-item active">
+            <button type="button" class="accordion-header">
+              <span>📢 Novas Informações Atuais & Notícias</span>
+              <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-body">
+              <div id="ong-news-list" class="news-list">
+                <!-- Preenchido via script.js -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Aba 3: Perfil -->
       <section id="tab-profile" class="tab-content">
         <header class="home-header">
           <h2>Meu Perfil</h2>
         </header>
 
         <div class="profile-scroll">
-          <!-- Foto e Identificação -->
           <div class="profile-card">
             <div class="avatar-container" id="avatar-container">
               <img id="avatar-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%23636e72' viewBox='0 0 16 16'><path d='M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z'/><path fill-rule='evenodd' d='M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z'/></svg>" alt="Foto de Perfil">
@@ -118,7 +161,14 @@
             <p id="profile-email" class="profile-subtitle">usuario@email.com</p>
           </div>
 
-          <!-- Canal de Denúncia -->
+          <!-- Painel Exclusivo para ONG -->
+          <div id="ong-admin-panel" class="profile-section" style="display: none;">
+            <h4>Painel da ONG</h4>
+            <button type="button" id="btn-open-news-modal" class="btn-primary" style="margin-top: 0; background: var(--secondary);">
+              ✍️ Publicar Notícia / Informativo no Feed
+            </button>
+          </div>
+
           <div class="profile-section">
             <button type="button" id="btn-open-report" class="btn-report">
               <span class="report-icon">🚨</span>
@@ -129,7 +179,6 @@
             </button>
           </div>
 
-          <!-- Configurações -->
           <div class="profile-section">
             <h4>Configurações</h4>
             <div class="settings-list">
@@ -150,10 +199,14 @@
         </div>
       </section>
 
-      <!-- Barra de Navegação Inferior -->
+      <!-- Barra de Navegação Inferior Fixa (3 Abas) -->
       <nav class="bottom-nav">
-        <button type="button" class="nav-btn active" data-tab="tab-feed">
+        <button type="button" class="nav-btn active" data-tab="tab-home">
           <span class="nav-icon">🐾</span>
+          <span class="nav-label">Início</span>
+        </button>
+        <button type="button" class="nav-btn" data-tab="tab-feed">
+          <span class="nav-icon">📰</span>
           <span class="nav-label">Feed</span>
         </button>
         <button type="button" class="nav-btn" data-tab="tab-profile">
@@ -163,7 +216,40 @@
       </nav>
     </div>
 
-    <!-- Pop-up Modal: Enquete / Canal de Denúncia -->
+    <!-- Modais -->
+    <div id="modal-news" class="modal-backdrop">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3 style="color: var(--secondary);">✍️ Nova Publicação da ONG</h3>
+          <button type="button" id="btn-close-news" class="modal-close">&times;</button>
+        </div>
+        
+        <form id="form-news" class="modal-body">
+          <div class="input-group">
+            <label>Título da Notícia / Campanha:</label>
+            <input type="text" id="news-title" required placeholder="Ex: Feira de Adoção no Sábado!">
+          </div>
+
+          <div class="input-group">
+            <label>Categoria:</label>
+            <select id="news-category" required>
+              <option value="Campanha">Campanha de Adoção</option>
+              <option value="Urgente">Pedido de Ajuda / Ração</option>
+              <option value="Evento">Evento / Castração</option>
+              <option value="Informativo">Informativo Geral</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Mensagem / Conteúdo:</label>
+            <textarea id="news-content" rows="4" required placeholder="Conte os detalhes da novidade ou evento..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary" style="background: var(--secondary);">Postar no Feed</button>
+        </form>
+      </div>
+    </div>
+
     <div id="modal-report" class="modal-backdrop">
       <div class="modal-box">
         <div class="modal-header">
