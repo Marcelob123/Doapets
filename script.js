@@ -1,23 +1,82 @@
-// Estado da sessão e repositório local de notícias
+// Banco de dados inicial de pets com categorias
+const samplePets = [
+  {
+    id: 1,
+    name: "Pipoca",
+    age: "2 anos",
+    category: "cao",
+    categoryLabel: "Cachorro",
+    icon: "🐶",
+    description: "Porte médio, vacinado e muito brincalhão."
+  },
+  {
+    id: 2,
+    name: "Mimi",
+    age: "4 meses",
+    category: "filhote",
+    categoryLabel: "Filhote",
+    icon: "🐱",
+    description: "Filhote de gato dócil, vermifugada."
+  },
+  {
+    id: 3,
+    name: "Thor",
+    age: "3 anos",
+    category: "cao",
+    categoryLabel: "Cachorro",
+    icon: "🐕",
+    description: "Porte grande, castrado e ótimo companheiro."
+  },
+  {
+    id: 4,
+    name: "Luna",
+    age: "1 ano",
+    category: "gato",
+    categoryLabel: "Gato",
+    icon: "🐈",
+    description: "Gatinha carinhosa, adaptada a apartamento."
+  },
+  {
+    id: 5,
+    name: "Floquinho",
+    age: "6 meses",
+    category: "outros",
+    categoryLabel: "Outros",
+    icon: "🐰",
+    description: "Coelhinho manso para adoção responsável."
+  }
+];
+
+const defaultNews = [
+  {
+    id: 1,
+    author: "ONG Patas do Bem",
+    category: "Campanha",
+    title: "Grande Feira de Adoção neste Sábado!",
+    content: "Venha conhecer nossos resgatados na Praça Central das 09h às 16h. Traga documentos para adotar.",
+    dateType: "Evento agendado para",
+    date: "2026-08-29"
+  },
+  {
+    id: 2,
+    author: "Instituto Amigo Fiel",
+    category: "Urgente",
+    title: "Campanha de Arrecadação de Ração",
+    content: "Nosso estoque de ração para cães adultos está quase no fim. Qualquer doação é bem-vinda!",
+    dateType: "Publicado em",
+    date: "2026-08-23"
+  }
+];
+
 const appState = {
   currentRole: null, // 'ong' | 'user' | 'guest'
   userProfile: null,
-  news: [
-    {
-      id: 1,
-      author: "ONG Patas do Bem",
-      category: "Campanha",
-      title: "Grande Feira de Adoção neste Sábado!",
-      content: "Venha conhecer nossos resgatados na Praça Central das 09h às 16h. Traga documentos para adotar."
-    },
-    {
-      id: 2,
-      author: "Instituto Amigo Fiel",
-      category: "Urgente",
-      title: "Campanha de Arrecadação de Ração",
-      content: "Nosso estoque de ração para cães adultos está quase no fim. Qualquer doação é bem-vinda!"
-    }
-  ]
+  authMode: 'signup',
+  selectedCategory: 'all',
+  searchQuery: '',
+  pets: samplePets,
+  registeredUsers: JSON.parse(localStorage.getItem('doapets_users')) || [],
+  news: JSON.parse(localStorage.getItem('doapets_news')) || defaultNews
 };
 
 // Telas principais
@@ -25,21 +84,32 @@ const screenProfile = document.getElementById('screen-profile-select');
 const screenForm = document.getElementById('screen-form');
 const mainApp = document.getElementById('main-app');
 
-// Formulário de Cadastro
+// Formulário de Autenticação
 const form = document.getElementById('auth-form');
 const formTitle = document.getElementById('form-title');
+const formSubtitle = document.getElementById('form-subtitle');
 const labelName = document.getElementById('label-name');
 const labelDoc = document.getElementById('label-doc');
 const inputDoc = document.getElementById('doc');
+const inputName = document.getElementById('name');
+const inputEmail = document.getElementById('email');
+const inputPassword = document.getElementById('password');
+const btnSubmitAuth = document.getElementById('btn-submit-auth');
+const btnToggleSignup = document.getElementById('btn-toggle-signup');
+const btnToggleLogin = document.getElementById('btn-toggle-login');
+const signupFields = document.querySelectorAll('.signup-field');
 
 // Elementos da Home, Feed & Perfil
 const loggedUserType = document.getElementById('logged-user-type');
 const guestAlert = document.getElementById('guest-alert');
-const btnAction = document.querySelector('.btn-action');
 const profileName = document.getElementById('profile-name');
 const profileEmail = document.getElementById('profile-email');
 const ongAdminPanel = document.getElementById('ong-admin-panel');
 const ongNewsList = document.getElementById('ong-news-list');
+const petsFeedList = document.getElementById('pets-feed-list');
+const inputSearchPets = document.getElementById('input-search-pets');
+const badgeNewsCount = document.getElementById('badge-news-count');
+const navBadgeNews = document.getElementById('nav-badge-news');
 
 // Avatar
 const avatarContainer = document.getElementById('avatar-container');
@@ -56,40 +126,250 @@ const btnOpenNewsModal = document.getElementById('btn-open-news-modal');
 const btnCloseNews = document.getElementById('btn-close-news');
 const modalNews = document.getElementById('modal-news');
 const formNews = document.getElementById('form-news');
+const modalNewsTitleHeader = document.getElementById('modal-news-title-header');
+const newsEditId = document.getElementById('news-edit-id');
+const newsDate = document.getElementById('news-date');
+const newsDateType = document.getElementById('news-date-type');
+const btnSaveNews = document.getElementById('btn-save-news');
 
-// Renderizar notícias na lista suspensa do Feed
+// Modal Calendário
+const modalCalendar = document.getElementById('modal-calendar');
+const btnCloseCalendar = document.getElementById('btn-close-calendar');
+const calendarMonthYear = document.getElementById('calendar-month-year');
+const calendarDays = document.getElementById('calendar-days');
+const calendarFooterText = document.getElementById('calendar-footer-text');
+
+// Formatação de Datas
+const monthShortNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+
+function parseDateComponents(isoDateString) {
+  const [year, month, day] = isoDateString.split('-');
+  const monthIdx = parseInt(month, 10) - 1;
+  return {
+    day: day,
+    monthShort: monthShortNames[monthIdx],
+    monthNum: month,
+    year: year
+  };
+}
+
+// Renderizar lista de Pets com filtro e busca
+function renderPetsFeed() {
+  petsFeedList.innerHTML = '';
+
+  const filtered = appState.pets.filter(pet => {
+    const matchesCategory = appState.selectedCategory === 'all' || pet.category === appState.selectedCategory;
+    const query = appState.searchQuery.toLowerCase();
+    const matchesSearch = pet.name.toLowerCase().includes(query) ||
+                          pet.description.toLowerCase().includes(query) ||
+                          pet.categoryLabel.toLowerCase().includes(query);
+    return matchesCategory && matchesSearch;
+  });
+
+  if (filtered.length === 0) {
+    petsFeedList.innerHTML = '<p style="color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 20px;">Nenhum animal encontrado para esta pesquisa.</p>';
+    return;
+  }
+
+  filtered.forEach(pet => {
+    const card = document.createElement('div');
+    card.className = 'pet-card';
+    const isGuest = appState.currentRole === 'guest';
+
+    card.innerHTML = `
+      <div class="pet-placeholder">${pet.icon} Imagem do Pet</div>
+      <div class="pet-card-header">
+        <h3>${pet.name} (${pet.age})</h3>
+        <span class="pet-category-tag">${pet.categoryLabel}</span>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">${pet.description}</p>
+      <button class="btn-action ${isGuest ? 'disabled' : ''}" data-id="${pet.id}">Quero Adotar</button>
+    `;
+    petsFeedList.appendChild(card);
+  });
+
+  // Evento dos botões de adoção
+  petsFeedList.querySelectorAll('.btn-action').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (appState.currentRole === 'guest') {
+        alert('Visitantes não podem realizar interações. Crie uma conta para adotar!');
+      } else {
+        alert('🎉 Solicitação de adoção iniciada com sucesso!');
+      }
+    });
+  });
+}
+
+// Atualizar Badges de Notificação com a contagem arredondada
+function updateNewsBadges() {
+  const totalNews = appState.news.length;
+  badgeNewsCount.textContent = totalNews;
+  
+  if (totalNews > 0) {
+    navBadgeNews.textContent = totalNews;
+    navBadgeNews.style.display = 'block';
+  } else {
+    navBadgeNews.style.display = 'none';
+  }
+}
+
+// Renderizar notícias
 function renderNewsFeed() {
   ongNewsList.innerHTML = '';
+  updateNewsBadges();
   
   if (appState.news.length === 0) {
-    ongNewsList.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">Nenhuma notícia publicada ainda.</p>';
+    ongNewsList.innerHTML = '<p style="color: var(--text-muted); font-size: 0.85rem;">Nenhuma publicação cadastrada.</p>';
     return;
   }
 
   appState.news.forEach(item => {
     const card = document.createElement('div');
     card.className = 'news-card';
+    
+    const isOwnerOng = appState.currentRole === 'ong' && appState.userProfile && appState.userProfile.name === item.author;
+    const dateComp = parseDateComponents(item.date);
+
     card.innerHTML = `
       <div class="news-card-header">
-        <span class="news-author">🏠 ${item.author}</span>
-        <span class="news-tag">${item.category}</span>
+        <div class="news-card-author-info">
+          <span class="news-author">🏠 ${item.author}</span>
+          <span class="news-tag">${item.category}</span>
+        </div>
+        
+        <button type="button" class="date-badge-btn" data-date="${item.date}" data-type="${item.dateType}" title="Ver no calendário">
+          <span class="date-badge-month">${dateComp.monthShort}</span>
+          <span class="date-badge-day">${dateComp.day}</span>
+        </button>
       </div>
+
+      <div class="news-date-label">📅 ${item.dateType}: <strong>${dateComp.day}/${dateComp.monthNum}/${dateComp.year}</strong></div>
       <h4>${item.title}</h4>
       <p>${item.content}</p>
+      
+      ${isOwnerOng ? `
+        <div class="news-actions">
+          <button type="button" class="btn-post-action btn-post-edit" data-id="${item.id}">✏️ Editar</button>
+          <button type="button" class="btn-post-action btn-post-delete" data-id="${item.id}">🗑️ Excluir</button>
+        </div>
+      ` : ''}
     `;
     ongNewsList.appendChild(card);
   });
+
+  document.querySelectorAll('.date-badge-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openCalendarModal(btn.dataset.date, btn.dataset.type);
+    });
+  });
+
+  document.querySelectorAll('.btn-post-edit').forEach(btn => {
+    btn.addEventListener('click', () => {
+      editNews(Number(btn.dataset.id));
+    });
+  });
+
+  document.querySelectorAll('.btn-post-delete').forEach(btn => {
+    btn.addEventListener('click', () => {
+      deleteNews(Number(btn.dataset.id));
+    });
+  });
 }
 
-// Alternância das Listas Suspensas (Accordion)
-document.querySelectorAll('.accordion-header').forEach(header => {
-  header.addEventListener('click', () => {
-    const parentItem = header.parentElement;
-    parentItem.classList.toggle('active');
+// Pop-up do Calendário
+function openCalendarModal(dateStr, typeStr) {
+  const [yearStr, monthStr, dayStr] = dateStr.split('-');
+  const targetYear = parseInt(yearStr, 10);
+  const targetMonth = parseInt(monthStr, 10) - 1;
+  const targetDay = parseInt(dayStr, 10);
+
+  const monthNames = [
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
+
+  calendarMonthYear.textContent = `${monthNames[targetMonth]} de ${targetYear}`;
+  calendarFooterText.textContent = `${typeStr || 'Data'}: ${targetDay} de ${monthNames[targetMonth]} de ${targetYear}`;
+  calendarDays.innerHTML = '';
+
+  const firstDayIndex = new Date(targetYear, targetMonth, 1).getDay();
+  const totalDaysInMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
+
+  for (let i = 0; i < firstDayIndex; i++) {
+    const emptySlot = document.createElement('div');
+    emptySlot.className = 'calendar-day empty';
+    calendarDays.appendChild(emptySlot);
+  }
+
+  for (let d = 1; d <= totalDaysInMonth; d++) {
+    const dayElement = document.createElement('div');
+    dayElement.className = 'calendar-day';
+    dayElement.textContent = d;
+
+    if (d === targetDay) {
+      dayElement.classList.add('highlight');
+    }
+
+    calendarDays.appendChild(dayElement);
+  }
+
+  modalCalendar.classList.add('active');
+}
+
+btnCloseCalendar.addEventListener('click', () => {
+  modalCalendar.classList.remove('active');
+});
+
+// Editar notícia
+function editNews(id) {
+  const post = appState.news.find(n => n.id === id);
+  if (!post) return;
+
+  newsEditId.value = post.id;
+  document.getElementById('news-title').value = post.title;
+  document.getElementById('news-category').value = post.category;
+  document.getElementById('news-date-type').value = post.dateType || "Publicado em";
+  document.getElementById('news-date').value = post.date;
+  document.getElementById('news-content').value = post.content;
+
+  modalNewsTitleHeader.textContent = "✏️ Editar Publicação / Evento";
+  btnSaveNews.textContent = "Salvar Alterações";
+
+  modalNews.classList.add('active');
+}
+
+// Excluir notícia
+function deleteNews(id) {
+  if (confirm("Tem certeza de que deseja excluir esta publicação?")) {
+    appState.news = appState.news.filter(n => n.id !== id);
+    localStorage.setItem('doapets_news', JSON.stringify(appState.news));
+    renderNewsFeed();
+  }
+}
+
+// Eventos da Barra de Pesquisa e Classificações
+inputSearchPets.addEventListener('input', (e) => {
+  appState.searchQuery = e.target.value;
+  renderPetsFeed();
+});
+
+document.querySelectorAll('.category-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    appState.selectedCategory = chip.dataset.category;
+    renderPetsFeed();
   });
 });
 
-// Navegação entre telas de autenticação e app principal
+// Alternar Dropdowns
+document.querySelectorAll('.accordion-header').forEach(header => {
+  header.addEventListener('click', () => {
+    header.parentElement.classList.toggle('active');
+  });
+});
+
+// Navegação entre telas
 function showScreen(screenType) {
   screenProfile.classList.remove('active');
   screenForm.classList.remove('active');
@@ -104,28 +384,63 @@ function showScreen(screenType) {
   }
 }
 
-// Configura formulário conforme perfil escolhido
-function setupForm(role) {
-  appState.currentRole = role;
-  
-  if (role === 'ong') {
-    formTitle.textContent = 'Cadastro de ONG';
-    labelName.textContent = 'Nome da ONG / Instituição';
-    labelDoc.textContent = 'CNPJ (ou CPF do responsável)';
-    inputDoc.placeholder = '00.000.000/0000-00';
-  } else {
-    formTitle.textContent = 'Cadastro Pessoa Física';
-    labelName.textContent = 'Nome Completo';
-    labelDoc.textContent = 'CPF';
-    inputDoc.placeholder = '000.000.000-00';
-  }
+// Configuração do formulário de Cadastro/Login
+function setupAuthForm(mode) {
+  appState.authMode = mode;
+  const isOng = appState.currentRole === 'ong';
 
+  if (mode === 'signup') {
+    btnToggleSignup.classList.add('active');
+    btnToggleLogin.classList.remove('active');
+    signupFields.forEach(f => f.style.display = 'flex');
+    inputName.required = true;
+    inputDoc.required = true;
+
+    if (isOng) {
+      formTitle.textContent = 'Cadastro de ONG';
+      formSubtitle.textContent = 'Crie a conta da sua instituição';
+      labelName.textContent = 'Nome da ONG / Instituição';
+      labelDoc.textContent = 'CNPJ (ou CPF do responsável)';
+      inputDoc.placeholder = '00.000.000/0000-00';
+    } else {
+      formTitle.textContent = 'Cadastro Pessoa Física';
+      formSubtitle.textContent = 'Crie seu perfil no Doapets';
+      labelName.textContent = 'Nome Completo';
+      labelDoc.textContent = 'CPF';
+      inputDoc.placeholder = '000.000.000-00';
+    }
+
+    btnSubmitAuth.textContent = 'Criar Conta';
+  } else {
+    btnToggleLogin.classList.add('active');
+    btnToggleSignup.classList.remove('active');
+    signupFields.forEach(f => f.style.display = 'none');
+    inputName.required = false;
+    inputDoc.required = false;
+
+    formTitle.textContent = isOng ? 'Login de ONG' : 'Login de Usuário';
+    formSubtitle.textContent = 'Entre com seu e-mail e senha cadastrados';
+    btnSubmitAuth.textContent = 'Entrar no App';
+  }
+}
+
+function startAuthFlow(role) {
+  appState.currentRole = role;
+  setupAuthForm('signup');
   showScreen('form');
 }
 
-// Entrar no aplicativo principal
-function enterHome(profileData) {
+function enterHome(profileData, shouldSaveSession = true) {
   appState.userProfile = profileData;
+  
+  if (shouldSaveSession && appState.currentRole !== 'guest') {
+    localStorage.setItem('doapets_session', JSON.stringify({
+      role: appState.currentRole,
+      profile: profileData
+    }));
+  }
+
+  renderPetsFeed();
   renderNewsFeed();
   
   if (appState.currentRole === 'guest') {
@@ -134,9 +449,6 @@ function enterHome(profileData) {
     profileName.textContent = 'Visitante';
     profileEmail.textContent = 'Sem conta conectada';
     ongAdminPanel.style.display = 'none';
-    
-    btnAction.classList.add('disabled');
-    btnAction.onclick = () => alert('Visitantes não podem realizar interações.');
   } else {
     const roleName = appState.currentRole === 'ong' ? 'ONG' : 'Pessoa Física';
     loggedUserType.textContent = `${profileData.name} (${roleName})`;
@@ -144,22 +456,17 @@ function enterHome(profileData) {
     profileEmail.textContent = profileData.email || 'Sem e-mail cadastrado';
     guestAlert.style.display = 'none';
     
-    // Painel de postagem visível apenas para perfil ONG
     if (appState.currentRole === 'ong') {
       ongAdminPanel.style.display = 'block';
     } else {
       ongAdminPanel.style.display = 'none';
     }
-
-    btnAction.classList.remove('disabled');
-    btnAction.onclick = () => alert('Ação iniciada com sucesso!');
   }
 
   switchTab('tab-home');
   showScreen('app');
 }
 
-// Alternar entre as 3 abas inferiores (Início / Feed / Perfil)
 function switchTab(tabId) {
   document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -171,7 +478,7 @@ function switchTab(tabId) {
   if (targetBtn) targetBtn.classList.add('active');
 }
 
-// Upload de foto de perfil
+// Avatar
 avatarContainer.addEventListener('click', () => {
   if (appState.currentRole === 'guest') {
     alert('Visitantes não podem alterar foto de perfil.');
@@ -191,8 +498,13 @@ avatarInput.addEventListener('change', (e) => {
   }
 });
 
-// Modal de Publicação (ONG)
+// Publicação da ONG
 btnOpenNewsModal.addEventListener('click', () => {
+  formNews.reset();
+  newsEditId.value = '';
+  newsDate.value = new Date().toISOString().split('T')[0];
+  modalNewsTitleHeader.textContent = "✍️ Nova Publicação / Evento da ONG";
+  btnSaveNews.textContent = "Postar no Feed";
   modalNews.classList.add('active');
 });
 
@@ -203,26 +515,45 @@ btnCloseNews.addEventListener('click', () => {
 formNews.addEventListener('submit', (e) => {
   e.preventDefault();
   
-  const newPost = {
-    id: Date.now(),
-    author: appState.userProfile.name,
-    category: document.getElementById('news-category').value,
-    title: document.getElementById('news-title').value,
-    content: document.getElementById('news-content').value
-  };
+  const editId = newsEditId.value;
+  const title = document.getElementById('news-title').value;
+  const category = document.getElementById('news-category').value;
+  const dateType = document.getElementById('news-date-type').value;
+  const dateValue = document.getElementById('news-date').value;
+  const content = document.getElementById('news-content').value;
 
-  appState.news.unshift(newPost);
+  if (editId) {
+    const postIndex = appState.news.findIndex(n => n.id === Number(editId));
+    if (postIndex !== -1) {
+      appState.news[postIndex].title = title;
+      appState.news[postIndex].category = category;
+      appState.news[postIndex].dateType = dateType;
+      appState.news[postIndex].date = dateValue;
+      appState.news[postIndex].content = content;
+      alert('Publicação atualizada com sucesso!');
+    }
+  } else {
+    const newPost = {
+      id: Date.now(),
+      author: appState.userProfile.name,
+      category: category,
+      title: title,
+      content: content,
+      dateType: dateType,
+      date: dateValue
+    };
+    appState.news.unshift(newPost);
+    alert('📢 Postagem publicada no Feed!');
+  }
+
+  localStorage.setItem('doapets_news', JSON.stringify(appState.news));
   renderNewsFeed();
-  
   formNews.reset();
   modalNews.classList.remove('active');
-  alert('📢 Publicado com sucesso no Feed!');
-  
-  // Leva o usuário diretamente para a aba Feed para ver a publicação
   switchTab('tab-feed');
 });
 
-// Modal de Denúncia
+// Denúncia
 btnOpenReport.addEventListener('click', () => {
   if (appState.currentRole === 'guest') {
     alert('Visitantes não podem enviar denúncias. Faça login ou cadastre-se.');
@@ -249,37 +580,88 @@ formReport.addEventListener('submit', (e) => {
   modalReport.classList.remove('active');
 });
 
-// Eventos de Navegação e Autenticação
+// Eventos de Autenticação
+btnToggleSignup.addEventListener('click', () => setupAuthForm('signup'));
+btnToggleLogin.addEventListener('click', () => setupAuthForm('login'));
+
 document.querySelectorAll('.role-card').forEach(btn => {
-  btn.addEventListener('click', () => setupForm(btn.dataset.role));
+  btn.addEventListener('click', () => startAuthFlow(btn.dataset.role));
 });
 
 document.getElementById('btn-guest').addEventListener('click', () => {
   appState.currentRole = 'guest';
-  enterHome({ name: 'Visitante' });
+  enterHome({ name: 'Visitante' }, false);
 });
 
 document.getElementById('btn-back-profile').addEventListener('click', () => {
   showScreen('profile-select');
 });
 
+// Processamento de Cadastro e Login
 form.addEventListener('submit', (e) => {
   e.preventDefault();
-  const userData = {
-    name: document.getElementById('name').value,
-    email: document.getElementById('email').value,
-    doc: document.getElementById('doc').value
-  };
-  form.reset();
-  enterHome(userData);
+  
+  const email = inputEmail.value.trim().toLowerCase();
+  const password = inputPassword.value;
+
+  if (appState.authMode === 'signup') {
+    const exists = appState.registeredUsers.some(u => u.email === email);
+    if (exists) {
+      alert('Este e-mail já está cadastrado. Alterne para a aba "Fazer Login".');
+      return;
+    }
+
+    const newUser = {
+      role: appState.currentRole,
+      name: inputName.value.trim(),
+      email: email,
+      doc: inputDoc.value.trim(),
+      password: password
+    };
+
+    appState.registeredUsers.push(newUser);
+    localStorage.setItem('doapets_users', JSON.stringify(appState.registeredUsers));
+    
+    alert('🎉 Cadastro realizado com sucesso!');
+    form.reset();
+    enterHome(newUser, true);
+  } else {
+    const userFound = appState.registeredUsers.find(u => u.email === email && u.password === password && u.role === appState.currentRole);
+
+    if (userFound) {
+      alert(`👋 Bem-vindo(a) de volta, ${userFound.name}!`);
+      form.reset();
+      enterHome(userFound, true);
+    } else {
+      alert('❌ E-mail, senha ou tipo de conta incorretos. Verifique suas credenciais.');
+    }
+  }
 });
 
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => switchTab(btn.dataset.tab));
 });
 
+// Logout
 document.getElementById('btn-logout').addEventListener('click', () => {
+  localStorage.removeItem('doapets_session');
   appState.currentRole = null;
   appState.userProfile = null;
   showScreen('profile-select');
 });
+
+// Inicialização automática
+(function checkAutoLogin() {
+  const savedSession = localStorage.getItem('doapets_session');
+  if (savedSession) {
+    try {
+      const { role, profile } = JSON.parse(savedSession);
+      if (role && profile) {
+        appState.currentRole = role;
+        enterHome(profile, false);
+      }
+    } catch (e) {
+      localStorage.removeItem('doapets_session');
+    }
+  }
+})();
