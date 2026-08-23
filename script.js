@@ -1,49 +1,64 @@
-// Banco de dados inicial de pets com categorias
+// Base de dados expandida com detalhes completos para cada pet
 const samplePets = [
   {
     id: 1,
     name: "Pipoca",
     age: "2 anos",
+    size: "Porte Médio",
     category: "cao",
     categoryLabel: "Cachorro",
+    health: "Castrado & Vacinado",
+    location: "Formiga - MG",
     icon: "🐶",
-    description: "Porte médio, vacinado e muito brincalhão."
+    description: "Pipoca foi resgatado com muito carinho. Adora correr no quintal, convive super bem com outros cães e crianças. Está 100% vermifugado e pronto para um novo lar!"
   },
   {
     id: 2,
     name: "Mimi",
     age: "4 meses",
+    size: "Porte Pequeno",
     category: "filhote",
     categoryLabel: "Filhote",
+    health: "Vacinada (1ª dose)",
+    location: "Formiga - MG",
     icon: "🐱",
-    description: "Filhote de gato dócil, vermifugada."
+    description: "Mimi é uma gatinha filhote muito curiosa e ronronadora. Já aprendeu a usar a caixinha de areia e busca tutores responsáveis para apartamento com telas."
   },
   {
     id: 3,
     name: "Thor",
     age: "3 anos",
+    size: "Porte Grande",
     category: "cao",
     categoryLabel: "Cachorro",
+    health: "Castrado & Microchipado",
+    location: "Belo Horizonte - MG",
     icon: "🐕",
-    description: "Porte grande, castrado e ótimo companheiro."
+    description: "Thor é um cão leal, calmo e protetor. Precisa de espaço moderado e passeios diários. Muito dócil com toda a família."
   },
   {
     id: 4,
     name: "Luna",
     age: "1 ano",
+    size: "Porte Pequeno",
     category: "gato",
     categoryLabel: "Gato",
+    health: "Castrada & Vacinada",
+    location: "Divinópolis - MG",
     icon: "🐈",
-    description: "Gatinha carinhosa, adaptada a apartamento."
+    description: "Luna adora cochilar no sol e brincar com bolinhas de feltro. É muito calma e carinhosa com pessoas idosas."
   },
   {
     id: 5,
     name: "Floquinho",
     age: "6 meses",
+    size: "Porte Pequeno",
     category: "outros",
     categoryLabel: "Outros",
+    health: "Acompanhamento Veterinário",
+    location: "Formiga - MG",
     icon: "🐰",
-    description: "Coelhinho manso para adoção responsável."
+    description: "Coelhinho peludo e manso, resgatado de situação de abandono. Alimenta-se de feno e ração apropriada."
   }
 ];
 
@@ -69,11 +84,12 @@ const defaultNews = [
 ];
 
 const appState = {
-  currentRole: null, // 'ong' | 'user' | 'guest'
+  currentRole: null,
   userProfile: null,
   authMode: 'signup',
   selectedCategory: 'all',
   searchQuery: '',
+  selectedPetForModal: null,
   pets: samplePets,
   registeredUsers: JSON.parse(localStorage.getItem('doapets_users')) || [],
   news: JSON.parse(localStorage.getItem('doapets_news')) || defaultNews
@@ -117,6 +133,10 @@ const avatarInput = document.getElementById('avatar-input');
 const avatarPreview = document.getElementById('avatar-preview');
 
 // Modais
+const modalPetDetails = document.getElementById('modal-pet-details');
+const btnClosePetModal = document.getElementById('btn-close-pet-modal');
+const btnModalAdopt = document.getElementById('btn-modal-adopt');
+
 const btnOpenReport = document.getElementById('btn-open-report');
 const btnCloseReport = document.getElementById('btn-close-report');
 const modalReport = document.getElementById('modal-report');
@@ -153,7 +173,7 @@ function parseDateComponents(isoDateString) {
   };
 }
 
-// Renderizar lista de Pets com filtro e busca
+// Renderizar lista de Pets com layout horizontal e foto arredondada
 function renderPetsFeed() {
   petsFeedList.innerHTML = '';
 
@@ -173,32 +193,61 @@ function renderPetsFeed() {
 
   filtered.forEach(pet => {
     const card = document.createElement('div');
-    card.className = 'pet-card';
-    const isGuest = appState.currentRole === 'guest';
+    card.className = 'pet-row-card';
+    card.dataset.id = pet.id;
 
     card.innerHTML = `
-      <div class="pet-placeholder">${pet.icon} Imagem do Pet</div>
-      <div class="pet-card-header">
-        <h3>${pet.name} (${pet.age})</h3>
-        <span class="pet-category-tag">${pet.categoryLabel}</span>
+      <div class="pet-circle-avatar">${pet.icon}</div>
+      <div class="pet-row-info">
+        <div class="pet-row-header">
+          <h3>${pet.name}</h3>
+          <span class="pet-category-tag">${pet.categoryLabel}</span>
+        </div>
+        <span class="pet-row-meta">${pet.age} • ${pet.size}</span>
+        <p class="pet-row-desc">${pet.description}</p>
       </div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">${pet.description}</p>
-      <button class="btn-action ${isGuest ? 'disabled' : ''}" data-id="${pet.id}">Quero Adotar</button>
+      <span class="pet-row-arrow">›</span>
     `;
+
+    // Ao clicar no card, abre o pop-up com as informações completas do animal
+    card.addEventListener('click', () => {
+      openPetDetailsModal(pet);
+    });
+
     petsFeedList.appendChild(card);
   });
-
-  // Evento dos botões de adoção
-  petsFeedList.querySelectorAll('.btn-action').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (appState.currentRole === 'guest') {
-        alert('Visitantes não podem realizar interações. Crie uma conta para adotar!');
-      } else {
-        alert('🎉 Solicitação de adoção iniciada com sucesso!');
-      }
-    });
-  });
 }
+
+// Abertura do Modal de Detalhes do Pet
+function openPetDetailsModal(pet) {
+  appState.selectedPetForModal = pet;
+  
+  document.getElementById('pet-modal-title').textContent = `🐾 Perfil de ${pet.name}`;
+  document.getElementById('pet-modal-avatar').textContent = pet.icon;
+  document.getElementById('pet-modal-name').textContent = `${pet.name} (${pet.age})`;
+  document.getElementById('pet-modal-tag').textContent = pet.categoryLabel;
+  document.getElementById('pet-modal-age').textContent = pet.age;
+  document.getElementById('pet-modal-size').textContent = pet.size;
+  document.getElementById('pet-modal-health').textContent = pet.health;
+  document.getElementById('pet-modal-location').textContent = pet.location;
+  document.getElementById('pet-modal-description').textContent = pet.description;
+
+  modalPetDetails.classList.add('active');
+}
+
+btnClosePetModal.addEventListener('click', () => {
+  modalPetDetails.classList.remove('active');
+});
+
+// Ação de Adotar dentro do Pop-up
+btnModalAdopt.addEventListener('click', () => {
+  if (appState.currentRole === 'guest') {
+    alert('Visitantes não podem realizar interações. Crie uma conta ou faça login para adotar!');
+  } else {
+    alert(`🎉 Parabéns! Você manifestou interesse em adotar ${appState.selectedPetForModal.name}. A instituição entrará em contato!`);
+    modalPetDetails.classList.remove('active');
+  }
+});
 
 // Atualizar Badges de Notificação com a contagem arredondada
 function updateNewsBadges() {
