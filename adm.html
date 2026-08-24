@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Doapets — Painel Administrativo</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Estilos específicos da Administração */
+    .admin-header {
+      background: #2d3436;
+      color: white;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .admin-header h2 {
+      font-size: 1.1rem;
+      color: var(--primary);
+    }
+    .admin-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-card .stat-number {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary);
+      display: block;
+    }
+    .stat-card .stat-title {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .admin-section {
+      margin-bottom: 20px;
+    }
+    .admin-section h3 {
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .admin-table-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .admin-item-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .admin-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .admin-item-info strong {
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+    .admin-item-info small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .btn-adm-delete {
+      background: #fff5f5;
+      color: var(--danger);
+      border: 1px solid #fed7d7;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Tela de Login do Administrador -->
+    <section id="adm-login-screen" class="screen active">
+      <div class="brand">
+        <h1 class="logo">Doapets ADM 🛡️</h1>
+        <p class="tagline">Painel de Controle Central</p>
+      </div>
+
+      <div class="selection-card" style="margin-top: 20px;">
+        <h2>Acesso Administrativo</h2>
+        
+        <form id="adm-login-form">
+          <div class="input-group">
+            <label for="adm-user">Usuário:</label>
+            <input type="text" id="adm-user" required placeholder="Digite o usuário administrador">
+          </div>
+
+          <div class="input-group">
+            <label for="adm-pass">Senha:</label>
+            <input type="password" id="adm-pass" required placeholder="••••••••">
+          </div>
+
+          <button type="submit" class="btn-primary" style="background: #2d3436;">Acessar Painel</button>
+        </form>
+
+        <a href="index.html" class="btn-guest" style="text-align: center; margin-top: 16px;">← Voltar para o App</a>
+      </div>
+    </section>
+
+    <!-- Tela do Painel com Controle Total -->
+    <section id="adm-dashboard-screen" class="screen" style="padding: 0;">
+      <header class="admin-header">
+        <h2>🛡️ Doapets Master ADM</h2>
+        <button id="btn-adm-logout" class="btn-secondary" style="color: white; border-color: #636e72;">Sair</button>
+      </header>
+
+      <div style="padding: 16px; overflow-y: auto; flex: 1;">
+        <!-- Estatísticas Gerais -->
+        <div class="admin-stats-grid">
+          <div class="stat-card">
+            <span id="stat-total-users" class="stat-number">0</span>
+            <span class="stat-title">Usuários / ONGs</span>
+          </div>
+          <div class="stat-card">
+            <span id="stat-total-pets" class="stat-number">0</span>
+            <span class="stat-title">Pets Cadastrados</span>
+          </div>
+          <div class="stat-card">
+            <span id="stat-total-news" class="stat-number">0</span>
+            <span class="stat-title">Publicações</span>
+          </div>
+          <div class="stat-card">
+            <span id="stat-total-castrations" class="stat-number">0</span>
+            <span class="stat-title">Castrações</span>
+          </div>
+        </div>
+
+        <!-- Seção 1: Gestão de Contas (Exclusão Total de Usuários/ONGs) -->
+        <div class="admin-section">
+          <h3>👥 Contas Cadastradas</h3>
+          <div id="adm-users-list" class="admin-table-wrap"></div>
+        </div>
+
+        <!-- Seção 2: Gestão de Pets -->
+        <div class="admin-section">
+          <h3>🐾 Pets no Sistema</h3>
+          <div id="adm-pets-list" class="admin-table-wrap"></div>
+        </div>
+
+        <!-- Seção 3: Gestão de Notícias/Publicações -->
+        <div class="admin-section">
+          <h3>📢 Notícias e Avisos de ONGs</h3>
+          <div id="adm-news-list" class="admin-table-wrap"></div>
+        </div>
+
+        <!-- Seção 4: Pedidos de Castração -->
+        <div class="admin-section">
+          <h3>✂️ Solicitações de Castração</h3>
+          <div id="adm-castrations-list" class="admin-table-wrap"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Credenciais do Administrador
+    const ADM_CREDENTIALS = {
+      user: "Marcelo",
+      pass: "Marcelinho123"
+    };
+
+    // Elementos de tela
+    const admLoginScreen = document.getElementById('adm-login-screen');
+    const admDashboardScreen = document.getElementById('adm-dashboard-screen');
+    const admLoginForm = document.getElementById('adm-login-form');
+    const btnAdmLogout = document.getElementById('btn-adm-logout');
+
+    // Estatísticas
+    const statUsers = document.getElementById('stat-total-users');
+    const statPets = document.getElementById('stat-total-pets');
+    const statNews = document.getElementById('stat-total-news');
+    const statCastrations = document.getElementById('stat-total-castrations');
+
+    // Listas
+    const admUsersList = document.getElementById('adm-users-list');
+    const admPetsList = document.getElementById('adm-pets-list');
+    const admNewsList = document.getElementById('adm-news-list');
+    const admCastrationsList = document.getElementById('adm-castrations-list');
+
+    // Carregar dados compartilhados do Doapets
+    function getStorageData(key) {
+      return JSON.parse(localStorage.getItem(key)) || [];
+    }
+
+    function saveStorageData(key, data) {
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+
+    // Renderizar painel completo
+    function renderAdminDashboard() {
+      const users = getStorageData('doapets_users');
+      const pets = getStorageData('doapets_pets');
+      const news = getStorageData('doapets_news');
+      const castrations = getStorageData('doapets_castrations');
+
+      // Atualizar Contadores
+      statUsers.textContent = users.length;
+      statPets.textContent = pets.length;
+      statNews.textContent = news.length;
+      statCastrations.textContent = castrations.length;
+
+      // 1. Renderizar Usuários
+      admUsersList.innerHTML = users.length === 0 ? '<p style="font-size: 0.8rem; color: #636e72;">Nenhum usuário cadastrado.</p>' : '';
+      users.forEach((u, index) => {
+        const item = document.createElement('div');
+        item.className = 'admin-item-card';
+        item.innerHTML = `
+          <div class="admin-item-info">
+            <strong>${u.name} (${u.role.toUpperCase()})</strong>
+            <small>${u.email} • Doc: ${u.doc}</small>
+          </div>
+          <button class="btn-adm-delete" onclick="deleteUser(${index})">Excluir</button>
+        `;
+        admUsersList.appendChild(item);
+      });
+
+      // 2. Renderizar Pets
+      admPetsList.innerHTML = pets.length === 0 ? '<p style="font-size: 0.8rem; color: #636e72;">Nenhum pet cadastrado.</p>' : '';
+      pets.forEach((p, index) => {
+        const item = document.createElement('div');
+        item.className = 'admin-item-card';
+        item.innerHTML = `
+          <div class="admin-item-info">
+            <strong>${p.icon} ${p.name} (${p.categoryLabel})</strong>
+            <small>ONG: ${p.ownerOng} • ${p.location}</small>
+          </div>
+          <button class="btn-adm-delete" onclick="deletePet(${index})">Excluir</button>
+        `;
+        admPetsList.appendChild(item);
+      });
+
+      // 3. Renderizar Notícias
+      admNewsList.innerHTML = news.length === 0 ? '<p style="font-size: 0.8rem; color: #636e72;">Nenhuma notícia cadastrada.</p>' : '';
+      news.forEach((n, index) => {
+        const item = document.createElement('div');
+        item.className = 'admin-item-card';
+        item.innerHTML = `
+          <div class="admin-item-info">
+            <strong>${n.title}</strong>
+            <small>Por: ${n.author} • ${n.date}</small>
+          </div>
+          <button class="btn-adm-delete" onclick="deleteNews(${index})">Excluir</button>
+        `;
+        admNewsList.appendChild(item);
+      });
+
+      // 4. Renderizar Castrações
+      admCastrationsList.innerHTML = castrations.length === 0 ? '<p style="font-size: 0.8rem; color: #636e72;">Nenhum pedido de castração.</p>' : '';
+      castrations.forEach((c, index) => {
+        const item = document.createElement('div');
+        item.className = 'admin-item-card';
+        item.innerHTML = `
+          <div class="admin-item-info">
+            <strong>🐾 ${c.petName} (Tutor: ${c.tutorName})</strong>
+            <small>Destino: ${c.targetOngName} • Tel: ${c.tutorPhone}</small>
+          </div>
+          <button class="btn-adm-delete" onclick="deleteCastration(${index})">Excluir</button>
+        `;
+        admCastrationsList.appendChild(item);
+      });
+    }
+
+    // Funções de Exclusão do Administrador
+    window.deleteUser = function(index) {
+      if (confirm("Deseja realmente excluir esta conta de usuário permanentemente?")) {
+        const users = getStorageData('doapets_users');
+        users.splice(index, 1);
+        saveStorageData('doapets_users', users);
+        renderAdminDashboard();
+      }
+    };
+
+    window.deletePet = function(index) {
+      if (confirm("Deseja realmente remover este pet do sistema?")) {
+        const pets = getStorageData('doapets_pets');
+        pets.splice(index, 1);
+        saveStorageData('doapets_pets', pets);
+        renderAdminDashboard();
+      }
+    };
+
+    window.deleteNews = function(index) {
+      if (confirm("Deseja realmente apagar esta publicação?")) {
+        const news = getStorageData('doapets_news');
+        news.splice(index, 1);
+        saveStorageData('doapets_news', news);
+        renderAdminDashboard();
+      }
+    };
+
+    window.deleteCastration = function(index) {
+      if (confirm("Deseja excluir este registro de castração?")) {
+        const castrations = getStorageData('doapets_castrations');
+        castrations.splice(index, 1);
+        saveStorageData('doapets_castrations', castrations);
+        renderAdminDashboard();
+      }
+    };
+
+    // Processar Login ADM
+    admLoginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const user = document.getElementById('adm-user').value.trim();
+      const pass = document.getElementById('adm-pass').value;
+
+      if (user === ADM_CREDENTIALS.user && pass === ADM_CREDENTIALS.pass) {
+        sessionStorage.setItem('doapets_adm_logged', 'true');
+        admLoginScreen.classList.remove('active');
+        admDashboardScreen.classList.add('active');
+        renderAdminDashboard();
+      } else {
+        alert('❌ Usuário ou senha administrativa inválidos!');
+      }
+    });
+
+    // Logout ADM
+    btnAdmLogout.addEventListener('click', () => {
+      sessionStorage.removeItem('doapets_adm_logged');
+      admDashboardScreen.classList.remove('active');
+      admLoginScreen.classList.add('active');
+      admLoginForm.reset();
+    });
+
+    // Manter conectado na sessão do ADM
+    if (sessionStorage.getItem('doapets_adm_logged') === 'true') {
+      admLoginScreen.classList.remove('active');
+      admDashboardScreen.classList.add('active');
+      renderAdminDashboard();
+    }
+  </script>
+</body>
+</html>
