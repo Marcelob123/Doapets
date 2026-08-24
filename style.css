@@ -152,6 +152,22 @@ body {
   margin-top: 8px;
 }
 
+/* Link Acesso ADM */
+.adm-access-link {
+  display: block;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #a0aec0;
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 10px;
+  padding: 6px;
+}
+
+.adm-access-link:hover {
+  color: var(--primary);
+}
+
 /* Alternador de Cadastro / Login */
 .auth-toggle {
   display: flex;
@@ -236,6 +252,24 @@ body {
   border-color: var(--primary);
 }
 
+.forgot-password-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -8px;
+  margin-bottom: 12px;
+}
+
+.btn-forgot-link {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px 0;
+}
+
 /* Botões Globais */
 .btn-primary {
   width: 100%;
@@ -307,7 +341,6 @@ body {
   margin-bottom: 16px;
 }
 
-/* Barra de Pesquisa */
 .search-box {
   display: flex;
   align-items: center;
@@ -331,7 +364,6 @@ body {
   background: transparent;
 }
 
-/* Barra de Classificações dos Animais */
 .categories-bar {
   display: flex;
   gap: 8px;
@@ -373,7 +405,6 @@ body {
   color: var(--text);
 }
 
-/* Lista Horizontal de Pets com Imagem Redonda */
 .pets-horizontal-list {
   display: flex;
   flex-direction: column;
@@ -397,7 +428,6 @@ body {
   border-color: var(--primary);
 }
 
-/* Imagem Redonda do Animal */
 .pet-circle-avatar {
   width: 68px;
   height: 68px;
@@ -461,7 +491,6 @@ body {
   padding-left: 4px;
 }
 
-/* Modal de Detalhes Completos do Pet */
 .pet-details-modal-box {
   text-align: center;
 }
@@ -539,7 +568,6 @@ body {
   line-height: 1.4;
 }
 
-/* Accordion */
 .feed-accordion-wrap {
   display: flex;
   flex-direction: column;
@@ -629,7 +657,6 @@ body {
   line-height: 1.35;
 }
 
-/* Cards de Notícias */
 .news-list {
   display: flex;
   flex-direction: column;
@@ -763,7 +790,92 @@ body {
   background: #fff5f5;
 }
 
-/* Modal Calendário */
+.my-pets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.my-pet-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+
+.my-pet-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.my-pet-info .pet-icon-sm {
+  font-size: 1.5rem;
+}
+
+.my-pet-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.castration-requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.castration-card-item {
+  background: white;
+  border: 1.5px solid var(--border);
+  border-left: 4px solid #3498db;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.castration-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.castration-card-header strong {
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.castration-card-header span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.castration-card-body p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+
+.castration-card-body strong {
+  color: var(--text);
+}
+
+.btn-contact-tutor {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: #25d366;
+  color: white;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
 .calendar-modal-box {
   max-width: 320px;
   text-align: center;
@@ -818,7 +930,6 @@ body {
   color: var(--text-muted);
 }
 
-/* Barra Fixa e Badges */
 .bottom-nav {
   flex-shrink: 0;
   height: var(--nav-height);
@@ -875,7 +986,6 @@ body {
   color: var(--primary);
 }
 
-/* Perfil */
 .profile-scroll {
   display: flex;
   flex-direction: column;
@@ -980,6 +1090,15 @@ body {
   font-size: 0.9rem;
 }
 
+.settings-item.clickable-setting {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.settings-item.clickable-setting:active {
+  background: #f1f2f6;
+}
+
 .settings-item:last-child {
   border-bottom: none;
 }
@@ -995,7 +1114,6 @@ body {
   font-size: 1.2rem;
 }
 
-/* Modais */
 .modal-backdrop {
   display: none;
   position: absolute;
