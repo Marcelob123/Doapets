@@ -34,6 +34,9 @@
         <button type="button" id="btn-guest" class="btn-guest">
           Continuar apenas como Visitante
         </button>
+
+        <!-- Acesso rápido ao Painel Administrativo -->
+        <a href="adm.html" class="adm-access-link">🛡️ Acesso Administrativo (ADM)</a>
       </div>
     </section>
 
@@ -72,6 +75,10 @@
           <input type="password" id="password" required placeholder="••••••••">
         </div>
 
+        <div id="forgot-password-wrap" class="forgot-password-container" style="display: none;">
+          <button type="button" id="btn-open-forgot-modal" class="btn-forgot-link">Esqueceu sua senha?</button>
+        </div>
+
         <button type="submit" id="btn-submit-auth" class="btn-primary">Criar Conta</button>
       </form>
     </section>
@@ -92,16 +99,14 @@
           </div>
 
           <div id="guest-alert" class="guest-alert" style="display: none;">
-            ⚠️ Modo somente leitura. Visitantes não podem interagir ou registrar denúncias.
+            ⚠️ Modo somente leitura. Visitantes não podem interagir ou registrar solicitações.
           </div>
 
-          <!-- Barra de Pesquisa -->
           <div class="search-box">
             <span class="search-icon">🔍</span>
             <input type="text" id="input-search-pets" placeholder="Pesquisar por nome, raça, porte...">
           </div>
 
-          <!-- Classificações / Categorias -->
           <div class="categories-bar">
             <button type="button" class="category-chip active" data-category="all">🐾 Todos</button>
             <button type="button" class="category-chip" data-category="cao">🐶 Cachorros</button>
@@ -114,20 +119,58 @@
             <h3>🐾 Amigos para Adoção</h3>
           </div>
           
-          <!-- Lista de Pets com imagem redonda -->
-          <div id="pets-feed-list" class="pets-horizontal-list">
-            <!-- Renderizado via script.js -->
-          </div>
+          <div id="pets-feed-list" class="pets-horizontal-list"></div>
         </div>
       </section>
 
-      <!-- Aba 2: Feed Exclusivo de Notícias e ONGs -->
+      <!-- Aba 2: Feed -->
       <section id="tab-feed" class="tab-content">
         <header class="home-header">
           <h2>Feed & Informações</h2>
         </header>
 
         <div class="feed-accordion-wrap">
+          <!-- Dropdown: Solicitação de Castração -->
+          <div class="accordion-item active">
+            <button type="button" class="accordion-header">
+              <span class="accordion-title-wrap">
+                <span class="badge-count-left" style="background: #3498db;">✂️</span>
+                🏥 Programa & Pedidos de Castração
+              </span>
+              <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-body">
+              <div class="ong-info-card">
+                <h4>Deseja castrar seu animal?</h4>
+                <p>Envie os dados do seu pet diretamente para as ONGs parceiras para triagem, mutirões ou agendamento social.</p>
+                <button type="button" id="btn-open-castration-modal" class="btn-primary" style="margin-top: 10px; background: #3498db;">
+                  ✍️ Solicitar Castração para uma ONG
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dropdown: Cadastro de Interesse em Adoção -->
+          <div class="accordion-item">
+            <button type="button" class="accordion-header">
+              <span class="accordion-title-wrap">
+                <span id="badge-interest-count" class="badge-count-left" style="background: var(--secondary);">0</span>
+                📝 Cadastro de Interesse em Pets
+              </span>
+              <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-body">
+              <div class="ong-info-card">
+                <h4>Tem interesse em adotar um pet específico?</h4>
+                <p>Preencha os dados no formulário e converse diretamente com a instituição responsável via WhatsApp.</p>
+                <button type="button" id="btn-open-interest-modal" class="btn-primary" style="margin-top: 10px; background: #25d366;">
+                  💬 Preencher Interesse & Enviar no WhatsApp
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dropdown: Informações sobre ONGs -->
           <div class="accordion-item">
             <button type="button" class="accordion-header">
               <span>🏠 Informações sobre as ONGs</span>
@@ -145,7 +188,8 @@
             </div>
           </div>
 
-          <div class="accordion-item active">
+          <!-- Dropdown: Notícias -->
+          <div class="accordion-item">
             <button type="button" class="accordion-header">
               <span class="accordion-title-wrap">
                 <span id="badge-news-count" class="badge-count-left">0</span>
@@ -154,9 +198,7 @@
               <span class="accordion-icon">▼</span>
             </button>
             <div class="accordion-body">
-              <div id="ong-news-list" class="news-list">
-                <!-- Preenchido via script.js -->
-              </div>
+              <div id="ong-news-list" class="news-list"></div>
             </div>
           </div>
         </div>
@@ -180,7 +222,7 @@
           </div>
 
           <div id="ong-admin-panel" class="profile-section" style="display: none;">
-            <h4>Painel da ONG</h4>
+            <h4>Painel de Publicações da ONG</h4>
             <button type="button" id="btn-open-news-modal" class="btn-primary" style="margin-top: 0; background: var(--secondary);">
               ✍️ Publicar Notícia / Evento no Feed
             </button>
@@ -197,21 +239,42 @@
           </div>
 
           <div class="profile-section">
-            <h4>Configurações</h4>
+            <h4>Configurações & Gestão</h4>
             <div class="settings-list">
               <div class="settings-item">
                 <span class="setting-title">🔔 Notificações</span>
                 <input type="checkbox" checked class="setting-toggle">
               </div>
+              
+              <div id="setting-item-register-pet" class="settings-item clickable-setting" style="display: none;">
+                <span class="setting-title">🐾 Cadastrar Novo Pet para Adoção</span>
+                <span class="setting-arrow">›</span>
+              </div>
+
+              <div id="setting-item-change-password" class="settings-item clickable-setting">
+                <span class="setting-title">🔑 Redefinir Senha de Acesso</span>
+                <span class="setting-arrow">›</span>
+              </div>
+
               <div class="settings-item">
                 <span class="setting-title">🔒 Privacidade da Conta</span>
                 <span class="setting-arrow">›</span>
               </div>
               <div class="settings-item">
-                <span class="setting-title">📄 Termos de Adoção</span>
+                <span class="setting-title">📄 Termos de Adoção e Castração</span>
                 <span class="setting-arrow">›</span>
               </div>
             </div>
+          </div>
+
+          <div id="ong-pets-manage-section" class="profile-section" style="display: none;">
+            <h4>Meus Pets Cadastrados</h4>
+            <div id="ong-my-pets-list" class="my-pets-list"></div>
+          </div>
+
+          <div id="ong-castration-requests-section" class="profile-section" style="display: none;">
+            <h4>✂️ Pedidos de Castração Recebidos</h4>
+            <div id="ong-castration-list" class="castration-requests-list"></div>
           </div>
         </div>
       </section>
@@ -234,22 +297,199 @@
       </nav>
     </div>
 
-    <!-- Modal Pop-up: Detalhes Completos do Animal -->
+    <!-- Modais do Sistema -->
+    <div id="modal-forgot-password" class="modal-backdrop">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3 style="color: var(--primary);">🔑 Redefinir Senha</h3>
+          <button type="button" id="btn-close-forgot" class="modal-close">&times;</button>
+        </div>
+        <form id="form-forgot-password" class="modal-body">
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+            Informe seu e-mail e documento cadastrado (CPF/CNPJ) para criar uma nova senha.
+          </p>
+          <div class="input-group">
+            <label>E-mail Cadastrado:</label>
+            <input type="email" id="forgot-email" required placeholder="seu@email.com">
+          </div>
+          <div class="input-group">
+            <label>CPF ou CNPJ:</label>
+            <input type="text" id="forgot-doc" required placeholder="Digite o documento cadastrado">
+          </div>
+          <div class="input-group">
+            <label>Nova Senha:</label>
+            <input type="password" id="forgot-new-password" required placeholder="••••••••">
+          </div>
+          <div class="input-group">
+            <label>Confirmar Nova Senha:</label>
+            <input type="password" id="forgot-confirm-password" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn-primary">Atualizar Senha</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="modal-castration" class="modal-backdrop">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3 style="color: #3498db;">✂️ Solicitação de Castração</h3>
+          <button type="button" id="btn-close-castration" class="modal-close">&times;</button>
+        </div>
+        <form id="form-castration" class="modal-body">
+          <div class="input-group">
+            <label>Selecione a ONG de destino:</label>
+            <select id="castration-ong-select" required>
+              <option value="">Escolha a ONG...</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Seu Nome Completo (Tutor):</label>
+            <input type="text" id="castration-tutor-name" required placeholder="Seu nome completo">
+          </div>
+          <div class="input-group">
+            <label>Telefone / WhatsApp para contato:</label>
+            <input type="tel" id="castration-tutor-phone" required placeholder="(37) 99999-9999">
+          </div>
+          <div class="input-group">
+            <label>Nome do Animal:</label>
+            <input type="text" id="castration-pet-name" required placeholder="Ex: Bob, Belinha...">
+          </div>
+          <div class="input-group">
+            <label>Espécie & Sexo:</label>
+            <select id="castration-pet-type" required>
+              <option value="Cão - Macho">Cachorro (Macho)</option>
+              <option value="Cão - Fêmea">Cachorro (Fêmea)</option>
+              <option value="Gato - Macho">Gato (Macho)</option>
+              <option value="Gato - Fêmea">Gato (Fêmea)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Idade e Peso aproximado:</label>
+            <input type="text" id="castration-pet-weight" required placeholder="Ex: 1 ano e meio, 8kg">
+          </div>
+          <div class="input-group">
+            <label>Observações / Histórico de Saúde:</label>
+            <textarea id="castration-pet-notes" rows="3" placeholder="O pet tem alguma alergia, doença ou já tomou vacinas?"></textarea>
+          </div>
+          <button type="submit" class="btn-primary" style="background: #3498db;">Enviar Pedido de Castração para a ONG</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="modal-pet-form" class="modal-backdrop">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3 id="modal-pet-form-title" style="color: var(--primary);">🐾 Cadastrar Pet</h3>
+          <button type="button" id="btn-close-pet-form" class="modal-close">&times;</button>
+        </div>
+        <form id="form-pet-register" class="modal-body">
+          <input type="hidden" id="pet-edit-id">
+          <div class="input-group">
+            <label>Nome do Pet:</label>
+            <input type="text" id="pet-name" required placeholder="Ex: Mel, Bob, Thor...">
+          </div>
+          <div class="input-group">
+            <label>Ícone / Espécie:</label>
+            <select id="pet-icon" required>
+              <option value="🐶">🐶 Cachorro</option>
+              <option value="🐱">🐱 Gato</option>
+              <option value="🐰">🐰 Coelho / Outro</option>
+              <option value="🦜">🦜 Ave</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Categoria:</label>
+            <select id="pet-category" required>
+              <option value="cao">Cachorro</option>
+              <option value="gato">Gato</option>
+              <option value="filhote">Filhote</option>
+              <option value="outros">Outros</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Idade aproximada:</label>
+            <input type="text" id="pet-age" required placeholder="Ex: 2 anos, 4 meses...">
+          </div>
+          <div class="input-group">
+            <label>Porte:</label>
+            <select id="pet-size" required>
+              <option value="Porte Pequeno">Porte Pequeno</option>
+              <option value="Porte Médio">Porte Médio</option>
+              <option value="Porte Grande">Porte Grande</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Condição de Saúde:</label>
+            <input type="text" id="pet-health" required placeholder="Ex: Vacinado e Castrado">
+          </div>
+          <div class="input-group">
+            <label>Cidade / Localização:</label>
+            <input type="text" id="pet-location" required placeholder="Ex: Formiga - MG">
+          </div>
+          <div class="input-group">
+            <label>WhatsApp da ONG (com DDD):</label>
+            <input type="tel" id="pet-whatsapp" required placeholder="Ex: 37999999999">
+          </div>
+          <div class="input-group">
+            <label>Descrição e História:</label>
+            <textarea id="pet-description" rows="3" required placeholder="Conte sobre a personalidade e resgate do animal..."></textarea>
+          </div>
+          <button type="submit" id="btn-save-pet" class="btn-primary">Salvar Pet</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="modal-interest" class="modal-backdrop">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3 style="color: #25d366;">💬 Formulário de Interesse em Adoção</h3>
+          <button type="button" id="btn-close-interest" class="modal-close">&times;</button>
+        </div>
+        <form id="form-interest" class="modal-body">
+          <div class="input-group">
+            <label>Selecione o Pet de Interesse:</label>
+            <select id="interest-pet-select" required>
+              <option value="">Escolha um pet...</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Seu Nome Completo:</label>
+            <input type="text" id="interest-user-name" required placeholder="Seu nome">
+          </div>
+          <div class="input-group">
+            <label>Sua Cidade / Bairro:</label>
+            <input type="text" id="interest-user-city" required placeholder="Ex: Formiga - MG, Centro">
+          </div>
+          <div class="input-group">
+            <label>Tipo de Residência:</label>
+            <select id="interest-housing" required>
+              <option value="Casa com quintal telado">Casa com quintal telado</option>
+              <option value="Apartamento com redes de proteção">Apartamento com redes de proteção</option>
+              <option value="Sítio / Chácara">Sítio / Chácara</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Mensagem para a ONG:</label>
+            <textarea id="interest-message" rows="3" placeholder="Conte por que você quer adotar este animal..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary" style="background: #25d366;">📲 Enviar Mensagem via WhatsApp</button>
+        </form>
+      </div>
+    </div>
+
     <div id="modal-pet-details" class="modal-backdrop">
       <div class="modal-box pet-details-modal-box">
         <div class="modal-header">
           <h3 id="pet-modal-title" style="color: var(--primary);">🐾 Detalhes do Pet</h3>
           <button type="button" id="btn-close-pet-modal" class="modal-close">&times;</button>
         </div>
-        
         <div class="pet-details-content">
           <div class="pet-modal-circle-wrapper">
             <div id="pet-modal-avatar" class="pet-circle-lg">🐶</div>
           </div>
-          
           <h2 id="pet-modal-name" class="pet-modal-title-main">Nome do Pet</h2>
           <span id="pet-modal-tag" class="pet-category-tag">Categoria</span>
-
           <div class="pet-specs-grid">
             <div class="spec-item">
               <span class="spec-label">Idade</span>
@@ -268,33 +508,27 @@
               <strong id="pet-modal-location">Formiga - MG</strong>
             </div>
           </div>
-
           <div class="pet-modal-desc-box">
             <h4>História e Personalidade:</h4>
             <p id="pet-modal-description">Descrição detalhada do animal.</p>
           </div>
-
           <button type="button" id="btn-modal-adopt" class="btn-primary">Quero Adotar Este Pet ❤️</button>
         </div>
       </div>
     </div>
 
-    <!-- Modal: Publicar / Editar Notícia com Data (ONG) -->
     <div id="modal-news" class="modal-backdrop">
       <div class="modal-box">
         <div class="modal-header">
           <h3 id="modal-news-title-header" style="color: var(--secondary);">✍️ Nova Publicação da ONG</h3>
           <button type="button" id="btn-close-news" class="modal-close">&times;</button>
         </div>
-        
         <form id="form-news" class="modal-body">
           <input type="hidden" id="news-edit-id">
-          
           <div class="input-group">
             <label>Título da Notícia / Evento:</label>
             <input type="text" id="news-title" required placeholder="Ex: Feira de Adoção ou Informativo">
           </div>
-
           <div class="input-group">
             <label>Categoria:</label>
             <select id="news-category" required>
@@ -304,7 +538,6 @@
               <option value="Informativo">Informativo Geral</option>
             </select>
           </div>
-
           <div class="input-group">
             <label>Tipo de Data:</label>
             <select id="news-date-type" required>
@@ -312,23 +545,19 @@
               <option value="Evento agendado para">Data do Evento</option>
             </select>
           </div>
-
           <div class="input-group">
             <label>Data Escolhida:</label>
             <input type="date" id="news-date" required>
           </div>
-
           <div class="input-group">
             <label>Mensagem / Conteúdo:</label>
             <textarea id="news-content" rows="4" required placeholder="Conte os detalhes da novidade ou evento..."></textarea>
           </div>
-
           <button type="submit" id="btn-save-news" class="btn-primary" style="background: var(--secondary);">Postar no Feed</button>
         </form>
       </div>
     </div>
 
-    <!-- Modal Pop-up: Calendário Suspenso -->
     <div id="modal-calendar" class="modal-backdrop">
       <div class="modal-box calendar-modal-box">
         <div class="modal-header">
@@ -346,14 +575,12 @@
       </div>
     </div>
 
-    <!-- Modal: Canal de Denúncia -->
     <div id="modal-report" class="modal-backdrop">
       <div class="modal-box">
         <div class="modal-header">
           <h3>🚨 Denunciar Situação para ONG</h3>
           <button type="button" id="btn-close-report" class="modal-close">&times;</button>
         </div>
-        
         <form id="form-report" class="modal-body">
           <div class="input-group">
             <label>Tipo de Ocorrência:</label>
@@ -365,22 +592,18 @@
               <option value="outro">Outro caso urgente</option>
             </select>
           </div>
-
           <div class="input-group">
             <label>Espécie / Porte aproximado:</label>
             <input type="text" id="report-pet-info" required placeholder="Ex: Cão porte médio, filhote de gato...">
           </div>
-
           <div class="input-group">
             <label>Localização / Ponto de Referência:</label>
             <input type="text" id="report-location" required placeholder="Rua, Bairro ou Ponto de referência">
           </div>
-
           <div class="input-group">
             <label>Detalhes adicionais:</label>
             <textarea id="report-details" rows="3" placeholder="Descreva a situação brevemente..."></textarea>
           </div>
-
           <button type="submit" class="btn-primary btn-submit-report">Enviar Denúncia para ONGs</button>
         </form>
       </div>
