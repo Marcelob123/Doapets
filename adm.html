@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Doapets — Painel Administrativo</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-header {
+      background: #1e293b;
+      color: white;
+      padding: 18px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .admin-header h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ff7043;
+    }
+    .admin-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .stat-card .stat-number {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--primary);
+      display: block;
+    }
+    .stat-card .stat-title {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .admin-section {
+      margin-bottom: 22px;
+    }
+    .admin-section h3 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .admin-table-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .admin-item-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .admin-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .admin-item-info strong {
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+    .admin-item-info small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .btn-adm-delete {
+      background: #fff5f5;
+      color: var(--danger);
+      border: 1px solid #fed7d7;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <section id="adm-login-screen" class="screen active">
+      <div class="auth-hero" style="background: #1e293b; border-radius: 20px; margin-top: 10px;">
+        <h1 class="hero-logo-title" style="color: #ff7043;">Doapets ADM 🛡️</h1>
+        <p class="hero-tagline">Painel de Controle Central</p>
+      </div>
+
+      <div class="auth-card-main" style="border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-top: 16px;">
+        <h2 style="font-size: 1.2rem; color: var(--text); text-align: center;">Acesso Master</h2>
+        
+        <form id="adm-login-form">
+          <div class="input-group">
+            <label for="adm-user">Usuário:</label>
+            <input type="text" id="adm-user" required placeholder="Digite o usuário administrador">
+          </div>
+
+          <div class="input-group">
+            <label for="adm-pass">Senha:</label>
+            <input type="password" id="adm-pass" required placeholder="••••••••">
+          </div>
+
+          <button type="submit" class="btn-primary-orange" style="background: #1e293b;">Acessar Painel</button>
+        </form>
+
+        <a href="index.html" class="btn-guest-outline" style="text-align: center; text-decoration: none; display: block;">← Voltar para o App</a>
+      </div>
+    </section>
+
+    <section id="adm-dashboard-screen" class="screen" style="padding: 0;">
+      <header class="admin-header">
+        <h2>🛡️ Doapets Master ADM</h2>
+        <button id="btn-adm-logout" class="btn-secondary" style="color: white; border-color: #64748b;">Sair</button>
+      </header>
+
+      <div style="padding: 16px; overflow-y: auto; flex: 1;">
+        <div class="admin-stats-grid">
+          <div class="stat-card">
+            <span id="stat-total-users" class="stat-number">0</span>
+            <span class="stat-title">Usuários / ONGs</span>
+          </div>
+          <div class="stat-card">
+            <span id="stat-total-pets" class="stat-number">0</span>
+            <span class="stat-title">Pets Cadastrados</span>
+          </div>
+          <div class="stat-card">
+            <span id="stat-total-news" class="stat-number">0</span>
+            <span class="stat-title">Publicações</span>
+          </div>
+          <div class="stat-card">
+            <span id="stat-total-castrations" class="stat-number">0</span>
+            <span class="stat-title">Castrações</span>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <h3>👥 Contas Cadastradas</h3>
+          <div id="adm-users-list" class="admin-table-wrap"></div>
+        </div>
+
+        <div class="admin-section">
+          <h3>🐾 Pets no Sistema</h3>
+          <div id="adm-pets-list" class="admin-table-wrap"></div>
+        </div>
+
+        <div class="admin-section">
+          <h3>📢 Notícias e Avisos de ONGs</h3>
+          <div id="adm-news-list" class="admin-table-wrap"></div>
+        </div>
+
+        <div class="admin-section">
+          <h3>✂️ Solicitações de Castração</h3>
+          <div id="adm-castrations-list" class="admin-table-wrap"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const ADM_CREDENTIALS = {
+      user: "Marcelo",
+      pass: "Marcelinho123"
+    };
+
+    const admLoginScreen = document.getElementById('adm-login-screen');
+    const admDashboardScreen = document.getElementById('adm-dashboard-screen');
+    const admLoginForm = document.getElementById('adm-login-form');
+    const btnAdmLogout = document.getElementById('btn-adm-logout');
+
+    const statUsers = document.getElementById('stat-total-users');
+    const statPets = document.getElementById('stat-total-pets');
+    const statNews = document.getElementById('stat-total-news');
+    const statCastrations = document.getElementById('stat-total-castrations');
+
+    const admUsersList = document.getElementById('adm-users-list');
+    const admPetsList = document.getElementById('adm-pets-list');
+    const admNewsList = document.getElementById('adm-news-list');
+    const admCastrationsList = document.getElementById('adm-castrations-list');
+
+    function getStorageData(key) {
+      return JSON.parse(localStorage.getItem(key)) || [];
+    }
+
+    function saveStorageData(key, data) {
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+
+    function renderAdminDashboard() {
+      const users = getStorageData('doapets_users');
+      const pets = getStorageData('doapets_pets');
+      const news = getStorageData('doapets_news');
+      const castrations = getStorageData('doapets_castrations');
+
+      statUsers.textContent = users.length;
+      statPets.textContent = pets.length;
+      statNews.textContent = news.length;
+      statCastrations.textContent = castrations.length;
+
+      admUsersList.innerHTML = users.length === 0 ? '<p style="font-size: 0.8rem; color: #64748b;">Nenhum usuário cadastrado.</p>' : '';
+      users.forEach((u, index) => {
+        const item = document.createElement('div');
+        item.className = 'admin-item-card';
+        item.innerHTML = `
+          <div class="admin-item-info">
+            <strong>${u.name} (${u.role.toUpperCase()})</strong>
+            <small>${u.email} • Doc: ${u.doc}</small>
+          </div>
+          <button class="btn-adm-delete" onclick="deleteUser(${index})">Excluir</button>
+        `;
+        admUsersList.appendChild(item);
+      });
+
+      admPetsList.innerHTML = pets.length === 0 ? '<p style="font-size: 0.8rem; color: #64748b;">Nenhum pet cadastrado.</p>' : '';
+      pets.forEach((p, index) => {
+        const item = document.createElement('div');
+        item.className = 'admin-item-card';
+        item.innerHTML = `
+          <div class="admin-item-info">
+            <strong>${p.icon} ${p.name} (${p.categoryLabel})</strong>
+            <small>ONG: ${p.ownerOng} • ${p.location}</small>
+          </div>
+          <button class="btn-adm-delete" onclick="deletePet(${index})">Excluir</button>
+        `;
+        admPetsList.appendChild(item);
+      });
+
+      admNewsList.innerHTML = news.length === 0 ? '<p style="font-size: 0.8rem; color: #64748b;">Nenhuma notícia cadastrada.</p>' : '';
+      news.forEach((n, index) => {
+        const item = document.createElement('div');
+        item.className = 'admin-item-card';
+        item.innerHTML = `
+          <div class="admin-item-info">
+            <strong>${n.title}</strong>
+            <small>Por: ${n.author} • ${n.date}</small>
+          </div>
+          <button class="btn-adm-delete" onclick="deleteNews(${index})">Excluir</button>
+        `;
+        admNewsList.appendChild(item);
+      });
+
+      admCastrationsList.innerHTML = castrations.length === 0 ? '<p style="font-size: 0.8rem; color: #64748b;">Nenhum pedido de castração.</p>' : '';
+      castrations.forEach((c, index) => {
+        const item = document.createElement('div');
+        item.className = 'admin-item-card';
+        item.innerHTML = `
+          <div class="admin-item-info">
+            <strong>🐾 ${c.petName} (Tutor: ${c.tutorName})</strong>
+            <small>Destino: ${c.targetOngName} • Tel: ${c.tutorPhone}</small>
+          </div>
+          <button class="btn-adm-delete" onclick="deleteCastration(${index})">Excluir</button>
+        `;
+        admCastrationsList.appendChild(item);
+      });
+    }
+
+    window.deleteUser = function(index) {
+      if (confirm("Deseja realmente excluir esta conta de usuário permanentemente?")) {
+        const users = getStorageData('doapets_users');
+        users.splice(index, 1);
+        saveStorageData('doapets_users', users);
+        renderAdminDashboard();
+      }
+    };
+
+    window.deletePet = function(index) {
+      if (confirm("Deseja realmente remover este pet do sistema?")) {
+        const pets = getStorageData('doapets_pets');
+        pets.splice(index, 1);
+        saveStorageData('doapets_pets', pets);
+        renderAdminDashboard();
+      }
+    };
+
+    window.deleteNews = function(index) {
+      if (confirm("Deseja realmente apagar esta publicação?")) {
+        const news = getStorageData('doapets_news');
+        news.splice(index, 1);
+        saveStorageData('doapets_news', news);
+        renderAdminDashboard();
+      }
+    };
+
+    window.deleteCastration = function(index) {
+      if (confirm("Deseja excluir este registro de castração?")) {
+        const castrations = getStorageData('doapets_castrations');
+        castrations.splice(index, 1);
+        saveStorageData('doapets_castrations', castrations);
+        renderAdminDashboard();
+      }
+    };
+
+    admLoginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const user = document.getElementById('adm-user').value.trim();
+      const pass = document.getElementById('adm-pass').value;
+
+      if (user === ADM_CREDENTIALS.user && pass === ADM_CREDENTIALS.pass) {
+        sessionStorage.setItem('doapets_adm_logged', 'true');
+        admLoginScreen.classList.remove('active');
+        admDashboardScreen.classList.add('active');
+        renderAdminDashboard();
+      } else {
+        alert('❌ Usuário ou senha administrativa inválidos!');
+      }
+    });
+
+    btnAdmLogout.addEventListener('click', () => {
+      sessionStorage.removeItem('doapets_adm_logged');
+      admDashboardScreen.classList.remove('active');
+      admLoginScreen.classList.add('active');
+      admLoginForm.reset();
+    });
+
+    if (sessionStorage.getItem('doapets_adm_logged') === 'true') {
+      admLoginScreen.classList.remove('active');
+      admDashboardScreen.classList.add('active');
+      renderAdminDashboard();
+    }
+  </script>
+</body>
+</html>
