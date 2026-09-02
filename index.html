@@ -8,83 +8,85 @@
 </head>
 <body>
   <div class="app-container">
-    <!-- Tela 1: Escolha do perfil -->
-    <section id="screen-profile-select" class="screen active">
-      <div class="brand">
-        <h1 class="logo">Doapets 🐾</h1>
-        <p class="tagline">Conectando corações e patas</p>
+    
+    <!-- Tela 1: Autenticação (Login / Cadastro) -->
+    <section id="screen-auth-main" class="screen active screen-auth">
+      
+      <div class="auth-hero">
+        <div class="hero-paw-decor decor-1">🐾</div>
+        <div class="hero-paw-decor decor-2">🐾</div>
+        
+        <div class="hero-brand-circle">
+          <span class="hero-icon">🐾</span>
+        </div>
+        <h1 class="hero-logo-title">Doapets</h1>
+        <p class="hero-tagline">Conectando corações e patas</p>
       </div>
 
-      <div class="selection-card">
-        <h2>Quem é você?</h2>
-        <div class="options-grid">
-          <button type="button" class="role-card" data-role="ong">
-            <span class="icon">🏠</span>
-            <span class="title">ONG / Protetor</span>
-            <span class="desc">Divulgar e gerenciar resgates</span>
-          </button>
-
-          <button type="button" class="role-card" data-role="user">
-            <span class="icon">👤</span>
-            <span class="title">Pessoa Física</span>
-            <span class="desc">Adotar, doar ou apoiar</span>
-          </button>
+      <div class="auth-card-main">
+        <div class="auth-segmented-control">
+          <button type="button" id="tab-btn-login" class="segmented-btn active">Entrar</button>
+          <button type="button" id="tab-btn-signup" class="segmented-btn">Criar Conta</button>
         </div>
 
-        <button type="button" id="btn-guest" class="btn-guest">
-          Continuar apenas como Visitante
+        <form id="auth-form-main">
+          <div class="role-selector-wrap">
+            <span class="field-caption">Tipo de Perfil:</span>
+            <div class="role-chips-group">
+              <label class="role-chip active">
+                <input type="radio" name="auth-role" value="user" checked>
+                <span class="chip-label">👤 Pessoa Física</span>
+              </label>
+              <label class="role-chip">
+                <input type="radio" name="auth-role" value="ong">
+                <span class="chip-label">🏠 ONG / Protetor</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="signup-only-fields" style="display: none;">
+            <div class="input-group">
+              <label for="name" id="label-name">Nome Completo</label>
+              <input type="text" id="name" placeholder="Seu nome completo">
+            </div>
+
+            <div class="input-group">
+              <label for="doc" id="label-doc">CPF</label>
+              <input type="text" id="doc" placeholder="000.000.000-00">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" required placeholder="seu@email.com">
+          </div>
+
+          <div class="input-group">
+            <label for="password">Senha</label>
+            <input type="password" id="password" required placeholder="••••••••">
+          </div>
+
+          <div id="forgot-password-wrap" class="forgot-password-container">
+            <button type="button" id="btn-open-forgot-modal" class="btn-forgot-link">Esqueceu a senha?</button>
+          </div>
+
+          <button type="submit" id="btn-submit-main-auth" class="btn-primary-orange">Entrar no Doapets</button>
+        </form>
+
+        <div class="auth-divider">
+          <span>ou</span>
+        </div>
+
+        <button type="button" id="btn-guest" class="btn-guest-outline">
+          👀 Entrar apenas como Visitante
         </button>
 
-        <!-- Acesso rápido ao Painel Administrativo -->
-        <a href="adm.html" class="adm-access-link">🛡️ Acesso Administrativo (ADM)</a>
+        <a href="adm.html" class="adm-access-link">🛡️ Painel Administrativo</a>
       </div>
     </section>
 
-    <!-- Tela 2: Autenticação (Cadastro ou Login) -->
-    <section id="screen-form" class="screen">
-      <button type="button" id="btn-back-profile" class="btn-icon">← Voltar</button>
-      
-      <div class="auth-toggle">
-        <button type="button" id="btn-toggle-signup" class="auth-toggle-btn active">Criar Conta</button>
-        <button type="button" id="btn-toggle-login" class="auth-toggle-btn">Fazer Login</button>
-      </div>
-
-      <div class="form-header">
-        <h2 id="form-title">Criar Conta</h2>
-        <p id="form-subtitle">Preencha seus dados de acesso</p>
-      </div>
-
-      <form id="auth-form">
-        <div class="input-group signup-field">
-          <label for="name" id="label-name">Nome Completo</label>
-          <input type="text" id="name" placeholder="Seu nome">
-        </div>
-
-        <div class="input-group signup-field">
-          <label for="doc" id="label-doc">CPF</label>
-          <input type="text" id="doc" placeholder="000.000.000-00">
-        </div>
-
-        <div class="input-group">
-          <label for="email">E-mail</label>
-          <input type="email" id="email" required placeholder="seu@email.com">
-        </div>
-
-        <div class="input-group">
-          <label for="password">Senha</label>
-          <input type="password" id="password" required placeholder="••••••••">
-        </div>
-
-        <div id="forgot-password-wrap" class="forgot-password-container" style="display: none;">
-          <button type="button" id="btn-open-forgot-modal" class="btn-forgot-link">Esqueceu sua senha?</button>
-        </div>
-
-        <button type="submit" id="btn-submit-auth" class="btn-primary">Criar Conta</button>
-      </form>
-    </section>
-
-    <!-- Área Autenticada com Abas -->
-    <div id="main-app" class="main-app" style="display: none;">
+    <!-- Tela 2: Aplicativo Principal com Abas -->
+    <div id="main-app" class="main-app screen">
       
       <!-- Aba 1: Início / Adoção -->
       <section id="tab-home" class="tab-content active">
@@ -97,6 +99,8 @@
           <div class="user-badge">
             Conectado como: <strong id="logged-user-type">Visitante</strong>
           </div>
+
+          <div id="user-checkin-alert" class="checkin-status-banner" style="display: none;"></div>
 
           <div id="guest-alert" class="guest-alert" style="display: none;">
             ⚠️ Modo somente leitura. Visitantes não podem interagir ou registrar solicitações.
@@ -130,7 +134,6 @@
         </header>
 
         <div class="feed-accordion-wrap">
-          <!-- Dropdown: Solicitação de Castração -->
           <div class="accordion-item active">
             <button type="button" class="accordion-header">
               <span class="accordion-title-wrap">
@@ -143,14 +146,13 @@
               <div class="ong-info-card">
                 <h4>Deseja castrar seu animal?</h4>
                 <p>Envie os dados do seu pet diretamente para as ONGs parceiras para triagem, mutirões ou agendamento social.</p>
-                <button type="button" id="btn-open-castration-modal" class="btn-primary" style="margin-top: 10px; background: #3498db;">
+                <button type="button" id="btn-open-castration-modal" class="btn-primary-orange" style="margin-top: 10px; background: #3498db;">
                   ✍️ Solicitar Castração para uma ONG
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- Dropdown: Cadastro de Interesse em Adoção -->
           <div class="accordion-item">
             <button type="button" class="accordion-header">
               <span class="accordion-title-wrap">
@@ -163,14 +165,13 @@
               <div class="ong-info-card">
                 <h4>Tem interesse em adotar um pet específico?</h4>
                 <p>Preencha os dados no formulário e converse diretamente com a instituição responsável via WhatsApp.</p>
-                <button type="button" id="btn-open-interest-modal" class="btn-primary" style="margin-top: 10px; background: #25d366;">
+                <button type="button" id="btn-open-interest-modal" class="btn-primary-orange" style="margin-top: 10px; background: #25d366;">
                   💬 Preencher Interesse & Enviar no WhatsApp
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- Dropdown: Informações sobre ONGs -->
           <div class="accordion-item">
             <button type="button" class="accordion-header">
               <span>🏠 Informações sobre as ONGs</span>
@@ -188,7 +189,6 @@
             </div>
           </div>
 
-          <!-- Dropdown: Notícias -->
           <div class="accordion-item">
             <button type="button" class="accordion-header">
               <span class="accordion-title-wrap">
@@ -204,7 +204,22 @@
         </div>
       </section>
 
-      <!-- Aba 3: Perfil -->
+      <!-- Aba 3: Triagem osca3 / Doapets -->
+      <section id="tab-osca3-triagem" class="tab-content">
+        <header class="home-header">
+          <h2>🛡️ Triagem osca3</h2>
+          <span class="badge-live-osca3">Avaliação Ativa</span>
+        </header>
+
+        <div class="triagem-intro-card">
+          <h4>Feed de Solicitações para Aprovação</h4>
+          <p>Exibição em ordem decrescente (mais recentes primeiro). Analise as respostas detalhadas da entrevista, moradia, custos veterinários e animais do candidato.</p>
+        </div>
+
+        <div id="osca3-feed-descending" class="approval-feed-scroll"></div>
+      </section>
+
+      <!-- Aba 4: Perfil -->
       <section id="tab-profile" class="tab-content">
         <header class="home-header">
           <h2>Meu Perfil</h2>
@@ -219,11 +234,13 @@
             <input type="file" id="avatar-input" accept="image/*" style="display: none;">
             <h3 id="profile-name">Nome do Usuário</h3>
             <p id="profile-email" class="profile-subtitle">usuario@email.com</p>
+            
+            <div id="profile-approval-badge" class="profile-checkin-pill" style="display: none;"></div>
           </div>
 
           <div id="ong-admin-panel" class="profile-section" style="display: none;">
             <h4>Painel de Publicações da ONG</h4>
-            <button type="button" id="btn-open-news-modal" class="btn-primary" style="margin-top: 0; background: var(--secondary);">
+            <button type="button" id="btn-open-news-modal" class="btn-primary-orange" style="margin-top: 0; background: var(--secondary);">
               ✍️ Publicar Notícia / Evento no Feed
             </button>
           </div>
@@ -238,6 +255,7 @@
             </button>
           </div>
 
+          <!-- Configurações & Gestão -->
           <div class="profile-section">
             <h4>Configurações & Gestão</h4>
             <div class="settings-list">
@@ -245,9 +263,19 @@
                 <span class="setting-title">🔔 Notificações</span>
                 <input type="checkbox" checked class="setting-toggle">
               </div>
-              
+
               <div id="setting-item-register-pet" class="settings-item clickable-setting" style="display: none;">
-                <span class="setting-title">🐾 Cadastrar Novo Pet para Adoção</span>
+                <span class="setting-title">🐾 Cadastrar Novo Pet para Adoção (ONG)</span>
+                <span class="setting-arrow">›</span>
+              </div>
+
+              <div id="setting-item-user-pet" class="settings-item clickable-setting" style="display: none;">
+                <span class="setting-title">🐶 Cadastrar Meu Animal de Estimação</span>
+                <span class="setting-arrow">›</span>
+              </div>
+
+              <div id="setting-item-request-approval" class="settings-item clickable-setting" style="display: none;">
+                <span class="setting-title" style="color: var(--primary);">📋 Solicitar Avaliação de Aptidão (osca3)</span>
                 <span class="setting-arrow">›</span>
               </div>
 
@@ -267,8 +295,13 @@
             </div>
           </div>
 
+          <div id="user-pets-section" class="profile-section" style="display: none;">
+            <h4>🐾 Meus Animais Cadastrados</h4>
+            <div id="user-my-pets-list" class="my-pets-list"></div>
+          </div>
+
           <div id="ong-pets-manage-section" class="profile-section" style="display: none;">
-            <h4>Meus Pets Cadastrados</h4>
+            <h4>🐾 Meus Pets Cadastrados para Adoção</h4>
             <div id="ong-my-pets-list" class="my-pets-list"></div>
           </div>
 
@@ -279,7 +312,7 @@
         </div>
       </section>
 
-      <!-- Barra de Navegação Inferior Fixa -->
+      <!-- Barra de Navegação Inferior -->
       <nav class="bottom-nav">
         <button type="button" class="nav-btn active" data-tab="tab-home">
           <span class="nav-icon">🐾</span>
@@ -290,6 +323,11 @@
           <span id="nav-badge-news" class="nav-badge">0</span>
           <span class="nav-label">Feed</span>
         </button>
+        <button type="button" id="nav-btn-osca3" class="nav-btn nav-btn-relative" data-tab="tab-osca3-triagem" style="display: none;">
+          <span class="nav-icon">🛡️</span>
+          <span id="nav-badge-osca3" class="nav-badge">0</span>
+          <span class="nav-label">Triagem</span>
+        </button>
         <button type="button" class="nav-btn" data-tab="tab-profile">
           <span class="nav-icon">👤</span>
           <span class="nav-label">Perfil</span>
@@ -297,7 +335,186 @@
       </nav>
     </div>
 
-    <!-- Modais do Sistema -->
+    <!-- Modal: Formulário Completo de Entrevista de Aptidão (Perguntas de ONGs) -->
+    <div id="modal-request-approval" class="modal-backdrop">
+      <div class="modal-box" style="max-height: 88vh;">
+        <div class="modal-header">
+          <h3 style="color: var(--primary);">📋 Entrevista de Aptidão (osca3)</h3>
+          <button type="button" id="btn-close-req-approval" class="modal-close">&times;</button>
+        </div>
+        <form id="form-request-approval" class="modal-body">
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px;">
+            Responda às perguntas abaixo com sinceridade. A unidade <strong>osca3 / Doapets</strong> utilizará essas informações para certificar sua aptidão.
+          </p>
+
+          <div class="input-group">
+            <label>Telefone / WhatsApp de Contato:</label>
+            <input type="tel" id="req-phone" required placeholder="(37) 99999-9999">
+          </div>
+
+          <div class="input-group">
+            <label>Endereço / Bairro / Cidade:</label>
+            <input type="text" id="req-address" required placeholder="Rua, Bairro e Cidade">
+          </div>
+
+          <div class="input-group">
+            <label>1. Tipo de Moradia & Proteção:</label>
+            <select id="req-housing" required>
+              <option value="Casa totalmente murada e com portão fechado">Casa totalmente murada e com portão fechado</option>
+              <option value="Apartamento com redes de proteção em todas as janelas">Apartamento com redes de proteção em todas as janelas</option>
+              <option value="Casa com quintal aberto / semiaberto">Casa com quintal aberto / semiaberto</option>
+              <option value="Sítio / Chácara cercada">Sítio / Chácara cercada</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>2. O imóvel é próprio ou alugado?</label>
+            <select id="req-residence-type" required>
+              <option value="Próprio">Próprio</option>
+              <option value="Alugado (Permite animais formalmente)">Alugado (Permite animais formalmente)</option>
+              <option value="Mora com parentes">Mora com parentes / Cedido</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>3. Todos os moradores concordam com a adoção?</label>
+            <select id="req-family-agrees" required>
+              <option value="Sim, todos estão de acordo e ansiosos">Sim, todos estão de acordo e ansiosos</option>
+              <option value="A maioria concorda">A maioria concorda</option>
+              <option value="Ainda em conversa">Ainda estamos alinhando em família</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>4. Quantas horas o pet ficará sozinho por dia?</label>
+            <select id="req-alone-time" required>
+              <option value="Menos de 3 horas (Sempre tem alguém)">Menos de 3 horas (Sempre tem alguém)</option>
+              <option value="Entre 4 a 6 horas">Entre 4 a 6 horas</option>
+              <option value="Mais de 8 horas por dia">Mais de 8 horas por dia</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>5. Rede de apoio em caso de viagens ou emergências:</label>
+            <input type="text" id="req-emergency-plan" required placeholder="Ex: Parente cuida, hotelzinho pet...">
+          </div>
+
+          <div class="input-group">
+            <label>6. Tem consciência e condições para gastos com ração premium e veterinário?</label>
+            <select id="req-financial-readiness" required>
+              <option value="Sim, possuo orçamento reservado para cuidados médicos e boa alimentação">Sim, possuo orçamento reservado para vacinas, consultas e ração de qualidade</option>
+              <option value="Apenas o básico no momento">Apenas o básico no momento</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>7. Motivação e perfil de pet desejado:</label>
+            <textarea id="req-motivation" rows="3" required placeholder="Conte por que quer adotar, porte desejado, se prefere animal calmo ou brincalhão..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary-orange">Enviar Avaliação Completa para osca3</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal Pop-up: Dossiê Completo do Usuário (Para Unidade osca3 / Doapets) -->
+    <div id="modal-osca3-dossier" class="modal-backdrop">
+      <div class="modal-box" style="max-width: 370px;">
+        <div class="modal-header">
+          <h3 id="dossier-title" style="color: var(--primary);">🔍 Dossiê Completo do Tutor</h3>
+          <button type="button" id="btn-close-dossier" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body dossier-body-scroll">
+          <div class="dossier-section">
+            <h4>👤 Dados Pessoais</h4>
+            <p><strong>Nome:</strong> <span id="dossier-name">--</span></p>
+            <p><strong>CPF:</strong> <span id="dossier-doc">--</span></p>
+            <p><strong>E-mail:</strong> <span id="dossier-email">--</span></p>
+            <p><strong>Telefone:</strong> <span id="dossier-phone">--</span></p>
+            <p><strong>Endereço:</strong> <span id="dossier-address">--</span></p>
+          </div>
+
+          <div class="dossier-section" style="margin-top: 14px;">
+            <h4>📋 Respostas da Entrevista da ONG</h4>
+            <p><strong>Moradia & Segurança:</strong> <span id="dossier-housing">--</span></p>
+            <p><strong>Situação do Imóvel:</strong> <span id="dossier-residence-type">--</span></p>
+            <p><strong>Acordo Familiar:</strong> <span id="dossier-family-agrees">--</span></p>
+            <p><strong>Tempo que fica só:</strong> <span id="dossier-alone-time">--</span></p>
+            <p><strong>Rede de Apoio:</strong> <span id="dossier-emergency-plan">--</span></p>
+            <p><strong>Suporte Financeiro:</strong> <span id="dossier-financial">--</span></p>
+            <p><strong>Motivação & Perfil:</strong> <span id="dossier-motivation">--</span></p>
+          </div>
+
+          <div class="dossier-section" style="margin-top: 14px;">
+            <h4>🐾 Animais que o Usuário já Possui</h4>
+            <div id="dossier-pets-list" class="dossier-pets-wrap"></div>
+          </div>
+
+          <div class="approval-btn-actions" style="margin-top: 16px;">
+            <button type="button" id="btn-dossier-approve" class="btn-approve-user">✅ Aprovar (Apto)</button>
+            <button type="button" id="btn-dossier-reject" class="btn-reject-user">❌ Reprovar (Não Apto)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Pop-up: Cadastrar Pet do Próprio Usuário -->
+    <div id="modal-user-pet-form" class="modal-backdrop">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3 style="color: var(--primary);">🐶 Cadastrar Meu Animal</h3>
+          <button type="button" id="btn-close-user-pet" class="modal-close">&times;</button>
+        </div>
+        <form id="form-user-pet" class="modal-body">
+          <div class="input-group">
+            <label>Nome do Animal:</label>
+            <input type="text" id="upet-name" required placeholder="Ex: Rex, Mel...">
+          </div>
+          <div class="input-group">
+            <label>Espécie:</label>
+            <select id="upet-species" required>
+              <option value="Cachorro">🐶 Cachorro</option>
+              <option value="Gato">🐱 Gato</option>
+              <option value="Outro">🐰 Outro animal</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Porte:</label>
+            <select id="upet-size" required>
+              <option value="Porte Pequeno">Porte Pequeno</option>
+              <option value="Porte Médio">Porte Médio</option>
+              <option value="Porte Grande">Porte Grande</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Idade:</label>
+            <input type="text" id="upet-age" required placeholder="Ex: 3 anos, 6 meses...">
+          </div>
+          <div class="input-group">
+            <label>Status de Vacinação:</label>
+            <select id="upet-vaccinated" required>
+              <option value="Sim (Vacinas em dia)">Sim (Todas as vacinas em dia)</option>
+              <option value="Parcial (Faltam doses)">Parcial (Faltam doses anuais)</option>
+              <option value="Não vacinado">Ainda não vacinado</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>É Castrado?</label>
+            <select id="upet-neutered" required>
+              <option value="Sim (Castrado)">Sim, já é castrado</option>
+              <option value="Não castrado">Não castrado</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Observações veterinárias / Temperamento:</label>
+            <textarea id="upet-notes" rows="2" placeholder="Convive bem com outros animais? Alguma doença crônica?"></textarea>
+          </div>
+          <button type="submit" class="btn-primary-orange">Salvar Meu Pet</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modais Auxiliares -->
     <div id="modal-forgot-password" class="modal-backdrop">
       <div class="modal-box">
         <div class="modal-header">
@@ -306,7 +523,7 @@
         </div>
         <form id="form-forgot-password" class="modal-body">
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
-            Informe seu e-mail e documento cadastrado (CPF/CNPJ) para criar uma nova senha.
+            Informe seu e-mail e documento cadastrado para criar uma nova senha.
           </p>
           <div class="input-group">
             <label>E-mail Cadastrado:</label>
@@ -324,7 +541,7 @@
             <label>Confirmar Nova Senha:</label>
             <input type="password" id="forgot-confirm-password" required placeholder="••••••••">
           </div>
-          <button type="submit" class="btn-primary">Atualizar Senha</button>
+          <button type="submit" class="btn-primary-orange">Atualizar Senha</button>
         </form>
       </div>
     </div>
@@ -371,7 +588,7 @@
             <label>Observações / Histórico de Saúde:</label>
             <textarea id="castration-pet-notes" rows="3" placeholder="O pet tem alguma alergia, doença ou já tomou vacinas?"></textarea>
           </div>
-          <button type="submit" class="btn-primary" style="background: #3498db;">Enviar Pedido de Castração para a ONG</button>
+          <button type="submit" class="btn-primary-orange" style="background: #3498db;">Enviar Pedido de Castração para a ONG</button>
         </form>
       </div>
     </div>
@@ -434,7 +651,7 @@
             <label>Descrição e História:</label>
             <textarea id="pet-description" rows="3" required placeholder="Conte sobre a personalidade e resgate do animal..."></textarea>
           </div>
-          <button type="submit" id="btn-save-pet" class="btn-primary">Salvar Pet</button>
+          <button type="submit" id="btn-save-pet" class="btn-primary-orange">Salvar Pet</button>
         </form>
       </div>
     </div>
@@ -473,7 +690,7 @@
             <label>Mensagem para a ONG:</label>
             <textarea id="interest-message" rows="3" placeholder="Conte por que você quer adotar este animal..."></textarea>
           </div>
-          <button type="submit" class="btn-primary" style="background: #25d366;">📲 Enviar Mensagem via WhatsApp</button>
+          <button type="submit" class="btn-primary-orange" style="background: #25d366;">📲 Enviar Mensagem via WhatsApp</button>
         </form>
       </div>
     </div>
@@ -512,7 +729,7 @@
             <h4>História e Personalidade:</h4>
             <p id="pet-modal-description">Descrição detalhada do animal.</p>
           </div>
-          <button type="button" id="btn-modal-adopt" class="btn-primary">Quero Adotar Este Pet ❤️</button>
+          <button type="button" id="btn-modal-adopt" class="btn-primary-orange">Quero Adotar Este Pet ❤️</button>
         </div>
       </div>
     </div>
@@ -553,7 +770,7 @@
             <label>Mensagem / Conteúdo:</label>
             <textarea id="news-content" rows="4" required placeholder="Conte os detalhes da novidade ou evento..."></textarea>
           </div>
-          <button type="submit" id="btn-save-news" class="btn-primary" style="background: var(--secondary);">Postar no Feed</button>
+          <button type="submit" id="btn-save-news" class="btn-primary-orange" style="background: var(--secondary);">Postar no Feed</button>
         </form>
       </div>
     </div>
@@ -604,7 +821,7 @@
             <label>Detalhes adicionais:</label>
             <textarea id="report-details" rows="3" placeholder="Descreva a situação brevemente..."></textarea>
           </div>
-          <button type="submit" class="btn-primary btn-submit-report">Enviar Denúncia para ONGs</button>
+          <button type="submit" class="btn-primary-orange btn-submit-report">Enviar Denúncia para ONGs</button>
         </form>
       </div>
     </div>
